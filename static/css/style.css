@@ -1,0 +1,354 @@
+/* --- Global Variables --- */
+:root {
+    --new-price: #83f659;
+    --primary-yellow: #f9ba00;
+    --dark-bg: #1f0f2a;
+    --card-bg: #1e293b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+}
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    color: #f8fafc;
+    font-family: 'Inter', sans-serif;
+
+    /* --- THE MESH GRADIENT --- */
+    /* Base Color: Deep Navy */
+    background-color: #020617; 
+    
+    /* Layer 1: Top Left Blue Glow */
+    /* Layer 2: Bottom Right Darker Navy */
+    /* Layer 3: Center Top Subtle Cyan Glow */
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.4) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(15, 23, 42, 1) 0px, transparent 50%),
+        radial-gradient(at 50% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%);
+    
+    background-attachment: fixed; /* Keeps the glow in place as you scroll */
+}
+
+/* Optional: Add a subtle 'noise' overlay to prevent color banding */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.03; /* Very faint */
+    pointer-events: none;
+background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");    z-index: 1;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-main) !important; 
+    font-weight: 700;
+    color: orangered;
+}
+.custom-nav {
+    background: rgba(15, 23, 42, 0.8) !important; /* Semi-transparent dark blue */
+    backdrop-filter: blur(12px) saturate(180%); /* The 'iOS' Glass effect */
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 12px 0;
+}
+
+.brand-icon {
+    font-size: 1.4rem;
+    filter: drop-shadow(0 0 8px rgba(255, 193, 7, 0.6));
+}
+
+.brand-text {
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    font-size: 1.1rem;
+}
+
+/* The Admin Button as a 'Pill' */
+.admin-pill {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    padding: 6px 15px !important;
+    transition: all 0.3s ease;
+    color: var(--text-main) !important;
+}
+
+.admin-pill:hover {
+    background: var(--primary-yellow);
+    color: #000 !important;
+}
+/* --- Hero Section --- */
+.hero {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    padding: 80px 0;
+    border-bottom: 1px solid #334155;
+    text-align: center;
+}
+/* --- Glass Search Box --- */
+.search-box {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 5px;
+    display: flex;
+}
+
+.search-box input {
+    background: transparent;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    width: 100%;
+}
+
+.search-box input:focus {
+    background: transparent;
+    color: white;
+    box-shadow: none;
+}
+
+.btn-search {
+    background: var(--primary-yellow);
+    border: none;
+    border-radius: 10px;
+    padding: 5px 15px;
+}
+
+/* --- Category Pills --- */
+.badge-pill {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    padding: 8px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    
+}
+
+.badge-pill:hover, .badge-pill.active {
+    background: var(--primary-yellow);
+    color: #000;
+    border-color: var(--primary-yellow);
+    font-weight: 700;
+}
+
+/* Hide scrollbar for category row */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* --- Deal Cards --- */
+/* --- Modern Glass Card Design --- */
+/* 1. Force the Column to stretch the Card */
+.row > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 2. Make the Card fill the full height of the Column */
+.deal-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Forces card to expand */
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 20px;
+}
+
+/* 3. The "Content Wrapper" pushes the button to the bottom */
+.card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* This pushes the footer/button down */
+}
+
+/* 4. Multi-line Text Truncation (The "Pro" Trick) */
+.card-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Shows exactly 2 lines of text */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 3rem; /* Fixed height for the title area (1.5rem x 2) */
+    margin-bottom: 10px;
+    color: white;
+}
+
+/* 5. Ensure images always sit in the same sized space */
+/* --- Updated Card Image Container --- */
+.card-img-container {
+    background: radial-gradient(circle, rgba(255,193,7,0.15) 0%, rgba(15,23,42,0) 70%);
+    height: 180px; /* Consistent height */
+    border-radius: 18px;
+    margin-bottom: 20px;
+    
+    /* NEW: Handle content positioning */
+    display: flex;
+    align-items: center;    /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    position: relative;     /* Establishes positioning context for the tag */
+    overflow: hidden;       /* Keeps everything inside the rounded corners */
+}
+
+/* --- Updated Alternative Text Styling --- */
+.card-img-container img {
+    max-height: 85%;
+    max-width: 85%;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+    
+    /* NEW: Styling specifically for when only Alt text shows */
+    color: var(--text-muted); /* Make alt text subtle */
+    font-size: 0.9rem;
+    font-style: italic;
+    text-align: center;
+    line-height: 1.3;
+    
+    /* Ensure alt text doesn't touch the edges */
+    padding: 10px; 
+}
+/* Floating Discount Badge */
+/* --- Updated Discount Tag --- */
+.discount-tag {
+    position: absolute;
+    top: 15px;
+    right: 15px; /* Keep it in the top right corner */
+    background: #ef4444; /* Red */
+    color: white;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 0.8rem;
+    z-index: 10; /* Ensures it stays on top of any alt text */
+    text-transform: uppercase;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+/* Pricing Section */
+.price-large {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--new-price);
+    margin-right: 10px;
+}
+
+.price-old {
+    color: var(--text-muted);
+    text-decoration: line-through;
+    font-size: 1rem;
+}
+
+/* Modern Rounded Button */
+.buy-btn {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    color: #000;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    transition: transform 0.2s;
+}
+
+.buy-btn:hover {
+    transform: scale(1.03);
+    background: #ffc107;
+}
+/* --- Hot Deal Glow Animation --- */
+@keyframes price-pulse {
+    0% { text-shadow: 0 0 5px rgba(255, 193, 7, 0.2); }
+    50% { text-shadow: 0 0 20px rgba(255, 193, 7, 0.6); }
+    100% { text-shadow: 0 0 5px rgba(255, 193, 7, 0.2); }
+}
+
+.hot-price {
+    color: #ffc107 !important;
+    animation: price-pulse 2s infinite ease-in-out;
+}
+
+/* --- Hot Badge Styling --- */
+.hot-badge {
+    background: linear-gradient(45deg, #f59e0b, #ef4444);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    margin-left: 10px;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+.custom-footer {
+    background: rgba(15, 23, 42, 0.6); /* Slightly more transparent than the Nav */
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+}
+
+.footer-text {
+    font-size: 0.9rem;
+    letter-spacing: 0.3px;
+}
+
+.extra-small {
+    font-size: 0.7rem;
+    opacity: 0.6;
+}
+
+.footer-links a:hover {
+    color: var(--primary-yellow) !important;
+}
+@media (max-width: 767.98px) {
+    .custom-nav {
+        padding: 10px 0;
+    }
+    
+    .brand-text {
+        font-size: 1rem; /* Prevent wrapping on small screens */
+    }
+
+    .admin-pill {
+        padding: 5px 12px !important;
+        font-size: 0.9rem;
+    }
+    /* Center the header for mobile */
+    h2.fw-bold {
+        font-size: 1.6rem !important;
+        text-align: center;
+    }
+    p.text-secondary {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    /* Make the cards slightly more compact on mobile */
+    .deal-card {
+        padding: 15px;
+        border-radius: 20px;
+    }
+
+    .card-img-container {
+        height: 125px; /* Shorter image area to see more content */
+    }
+
+    .price-large {
+        font-size: 1.5rem;
+    }
+
+    /* Bigger "Thumb-Friendly" Button */
+    .buy-btn {
+        padding: 16px;
+        font-size: 1.1rem;
+    }
+    .custom-footer {
+        padding: 30px 0; /* More vertical breathing room for mobile thumbs */
+    }
+    
+    .footer-text {
+        font-size: 0.8rem;
+    }
+}
