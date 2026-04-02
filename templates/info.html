@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Elite Drops | {{ page_type | capitalize }}</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <style>
+      .text-cyan {
+        color: #00f2ff;
+      }
+      .section-header {
+        letter-spacing: 2px;
+        border-left: 3px solid #00f2ff;
+        padding-left: 15px;
+      }
+      .data-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(0, 242, 255, 0.1);
+        transition: 0.3s;
+      }
+      .data-card:hover {
+        border-color: #00f2ff;
+        background: rgba(0, 242, 255, 0.05);
+      }
+      section {
+        display: none;
+      }
+      .active-section {
+        display: block !important;
+      }
+      .status-dot {
+        height: 8px;
+        width: 8px;
+        background-color: #00f2ff;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 5px;
+        box-shadow: 0 0 8px #00f2ff;
+      }
+    </style>
+  </head>
+  <body class="bg-dark text-white">
+    <nav class="navbar navbar-dark custom-nav scrolled shadow">
+      <div class="container">
+        <a class="navbar-brand" href="/">
+          <div class="brand-text">
+            ELITE<span class="text-cyan">DROPS</span>
+          </div>
+        </a>
+        <a href="/" class="btn btn-outline-cyan btn-sm"
+          ><i class="fa-solid fa-house me-2"></i>RETURN_TO_BASE</a
+        >
+      </div>
+    </nav>
+
+    {% if page_type == 'about' %}
+    <section class="active-section container my-5 pt-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <h6 class="text-cyan font-monospace mb-2">
+            <span class="status-dot"></span>SYSTEM_ORIGIN
+          </h6>
+          <h1 class="display-4 fw-bold mb-4">
+            THE <span class="text-cyan">ELITE PROTOCOL</span>
+          </h1>
+
+          <p class="lead text-secondary mb-5">
+            Elite Drops was born out of a simple realization:
+            <strong>The best deals don't last more than 120 seconds.</strong>
+            Our platform isn't a marketplace—it's a high-frequency tracking
+            terminal that scans the global digital market to capture critical
+            price drops the moment they happen.
+          </p>
+
+          <div class="row g-4 mb-5">
+            <div class="col-md-4">
+              <div class="data-card p-4 h-100 rounded-4">
+                <h4 class="text-white h5">
+                  <i class="fa-solid fa-microchip text-cyan me-2"></i
+                  >Algorithmic Scans
+                </h4>
+                <p class="small text-secondary mb-0">
+                  Our proprietary crawler monitors 50+ premium retailers
+                  simultaneously to detect price glitches and flash sales.
+                </p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="data-card p-4 h-100 rounded-4">
+                <h4 class="text-white h5">
+                  <i class="fa-solid fa-filter text-cyan me-2"></i>Quality
+                  Filters
+                </h4>
+                <p class="small text-secondary mb-0">
+                  We don't just find "cheap" items. Every product must pass a
+                  4.0+ community rating threshold before being listed.
+                </p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="data-card p-4 h-100 rounded-4">
+                <h4 class="text-white h5">
+                  <i class="fa-solid fa-bolt text-cyan me-2"></i>Instant Access
+                </h4>
+                <p class="small text-secondary mb-0">
+                  Zero ads, zero fluff. Direct links designed for maximum speed
+                  to ensure you secure the stock before it's gone.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-black border border-secondary rounded-4 p-5 mb-5 text-center"
+          >
+            <h2 class="h4 text-warning mb-3">WHO WE SERVE</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px">
+              The modern shopper who values time and technology. Whether you are
+              building a professional tech setup or looking for high-end
+              lifestyle upgrades, we provide the intelligence you need to spend
+              smarter.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5 g-4">
+        <div class="col-md-6">
+          <h5 class="text-white border-start border-cyan border-3 ps-3">
+            REAL-TIME DATA MINING
+          </h5>
+          <p class="small text-secondary">
+            Our terminal doesn't sleep. Using localized nodes in the US, EU, and
+            Asia, we capture regional price glitches that usually disappear
+            within minutes. If a deal is on Elite Drops, it has already passed
+            our 12-point security and value verification check.
+          </p>
+        </div>
+        <div class="col-md-6">
+          <h5 class="text-white border-start border-warning border-3 ps-3">
+            THE "CRITICAL" THRESHOLD
+          </h5>
+          <p class="small text-secondary">
+            We only alert the "Inner Circle" when a discount exceeds 40% of the
+            90-day average price. We use historical price tracking to ensure
+            "Sale" tags are genuine and not inflated by merchants.
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-5 p-4 rounded-4 bg-dark-subtle border border-secondary">
+        <h6 class="text-cyan font-monospace mb-3">SYSTEM_LOG_v2.6</h6>
+        <div class="row text-center">
+          <div class="col-4">
+            <div class="h3 mb-0 text-white">50k+</div>
+            <div class="x-small text-secondary">SCANS/DAY</div>
+          </div>
+          <div class="col-4 border-start border-end border-secondary">
+            <div class="h3 mb-0 text-white">1.2s</div>
+            <div class="x-small text-secondary">LATENCY</div>
+          </div>
+          <div class="col-4">
+            <div class="h3 mb-0 text-white">100%</div>
+            <div class="x-small text-secondary">VERIFIED</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    {% endif %} {% if page_type == 'privacy' %}
+    <section class="active-section container my-5 pt-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <h6 class="text-cyan font-monospace mb-2">
+            <span class="status-dot"></span>ENCRYPTION_ACTIVE
+          </h6>
+          <h1 class="text-white mb-4">
+            PRIVACY_<span class="text-cyan">PROTOCOL</span>
+          </h1>
+
+          <div
+            class="alert alert-info bg-dark border-info text-info small mb-5"
+          >
+            <i class="fa-solid fa-circle-info me-2"></i> Our policy is simple:
+            Your data is your property. We only track what is necessary to run
+            the terminal.
+          </div>
+
+          <div class="mb-5">
+            <h4 class="section-header text-white mb-3">1.0 ZERO DATA RESALE</h4>
+            <p class="text-secondary">
+              We never sell, rent, or trade your personal information to third
+              parties. Our revenue is generated strictly through affiliate
+              partnerships, not through your data.
+            </p>
+          </div>
+
+          <div class="mb-5">
+            <h4 class="section-header text-white mb-3">
+              2.0 LOG DATA & COOKIES
+            </h4>
+            <ul class="text-secondary">
+              <li class="mb-2">
+                <strong>Wishlist Persistence:</strong> We use local storage to
+                keep your saved items on your device. We do not store your
+                wishlist on our servers.
+              </li>
+              <li class="mb-2">
+                <strong>Performance Analytics:</strong> We use anonymized
+                tracking to see which deals are popular so we can optimize our
+                crawler.
+              </li>
+            </ul>
+          </div>
+
+          <div class="mb-5">
+            <h4 class="section-header text-white mb-3">
+              3.0 NEWSLETTER SECURITY
+            </h4>
+            <p class="text-secondary">
+              If you join the "Inner Circle," your email is encrypted and stored
+              in a secured SQL database. You can terminate your subscription at
+              any time with a single click.
+            </p>
+          </div>
+          <div class="mt-5">
+            <h4 class="section-header text-white mb-3">
+              4.0 THIRD-PARTY TRACKING
+            </h4>
+            <p class="text-secondary">
+              We utilize Google Analytics and Meta Pixels strictly for **Traffic
+              Attribution**. This means we only see *how* you found us, not
+              *who* you are. We do not use cross-site tracking to follow your
+              browsing habits outside of the Elite Drops Terminal.
+            </p>
+          </div>
+
+          <div class="mt-4">
+            <h4 class="section-header text-white mb-3">5.0 DATA RETENTION</h4>
+            <p class="text-secondary">
+              Inactive email data is purged from our "Inner Circle" database
+              every 180 days. If you haven't opened an alert in 6 months, we
+              delete your record to ensure your digital footprint stays small.
+              **Your privacy is our uptime.**
+            </p>
+          </div>
+
+          <div class="p-3 bg-black rounded border-start border-info mt-4">
+            <p class="x-small text-info mb-0">
+              <i class="fa-solid fa-user-shield me-2"></i>
+              GDPR & CCPA COMPLIANT: Users have the right to request a full data
+              export or "Right to be Forgotten" via our concierge support.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    {% endif %} {% if page_type == 'terms' %}
+    <section class="active-section container my-5 pt-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <h6 class="text-warning font-monospace mb-2">
+            <span
+              class="status-dot"
+              style="background-color: #ffc107; box-shadow: 0 0 8px #ffc107"
+            ></span
+            >LEGAL_STABLE
+          </h6>
+          <h1 class="text-white mb-4">
+            TERMS_OF_<span class="text-warning">OPERATIONS</span>
+          </h1>
+
+          <div class="mb-5">
+            <h4 class="section-header text-white mb-3">1.0 PRICE VOLATILITY</h4>
+            <p class="text-secondary">
+              By using this terminal, you acknowledge that prices change in
+              milliseconds. Elite Drops is a
+              <strong>reporting tool</strong>, not a merchant. The final price
+              is always what you see on the merchant's checkout page (Amazon,
+              Flipkart, etc.).
+            </p>
+          </div>
+
+          <div class="mb-5">
+            <h4 class="section-header text-white mb-3">
+              2.0 AFFILIATE DISCLOSURE
+            </h4>
+            <p class="text-secondary">
+              In accordance with global advertising guidelines: Some links on
+              this terminal are affiliate links. This means if you click through
+              and make a purchase, we may receive a small commission. This
+              supports our server costs and keeps the terminal free for all
+              users.
+            </p>
+          </div>
+
+          <div class="mb-5">
+            <h4 class="section-header text-white mb-3">
+              3.0 LIMITATION OF LIABILITY
+            </h4>
+            <p class="text-secondary">
+              Elite Drops is not responsible for shipping delays, defective
+              products, or order cancellations made by the merchant. All product
+              warranties are handled directly by the brand or the retailer.
+            </p>
+          </div>
+
+          <div
+            class="p-4 rounded-4 border border-secondary font-monospace x-small text-secondary"
+          >
+            TERMINAL_USER_AGREEMENT_V.2.6_ACCEPTED_ON_ACCESS
+          </div>
+          <div class="mt-5">
+        <h4 class="section-header text-white mb-3">4.0 THIRD-PARTY TRACKING</h4>
+        <p class="text-secondary">
+          We utilize Google Analytics and Meta Pixels strictly for **Traffic
+          Attribution**. This means we only see *how* you found us, not *who*
+          you are. We do not use cross-site tracking to follow your browsing
+          habits outside of the Elite Drops Terminal.
+        </p>
+      </div>
+
+      <div class="mt-4">
+        <h4 class="section-header text-white mb-3">5.0 DATA RETENTION</h4>
+        <p class="text-secondary">
+          Inactive email data is purged from our "Inner Circle" database every
+          180 days. If you haven't opened an alert in 6 months, we delete your
+          record to ensure your digital footprint stays small. **Your privacy is
+          our uptime.**
+        </p>
+      </div>
+
+      <div class="p-3 bg-black rounded border-start border-info mt-4">
+        <p class="x-small text-info mb-0">
+          <i class="fa-solid fa-user-shield me-2"></i>
+          GDPR & CCPA COMPLIANT: Users have the right to request a full data
+          export or "Right to be Forgotten" via our concierge support.
+        </p>
+      </div>
+        </div>
+      </div>
+    </section>
+    {% endif %}
+
+    <footer class="mt-5 pt-5 pb-4 text-center">
+      <div class="container border-top border-secondary pt-4">
+        <a href="/" class="btn btn-sm btn-outline-secondary rounded-pill px-4"
+          >RETURN TO MAIN TERMINAL</a
+        >
+        <p class="text-secondary x-small mt-3 opacity-50">
+          © 2026 ELITE DROPS TERMINAL | SECURED_BY_ENCRYPTION
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

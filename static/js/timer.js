@@ -1,25 +1,75 @@
-function updateTimers() {
-    const timers = document.querySelectorAll('.timer');
+/* ========================================
+   💎 ELITE DROPS - COMMAND ENGINE 2026
+   ======================================== */
 
-    timers.forEach(timer => {
-        const expiryDate = new Date(timer.getAttribute('data-expiry')).getTime();
-        const now = new Date().getTime();
-        const timeLeft = expiryDate - now;
+document.addEventListener('DOMContentLoaded', () => {
+    initTimers();
+    updateWishlistUI();
+    syncWishlistStates();
+});
 
-        if (timeLeft <= 0) {
-            timer.innerHTML = "EXPIRED";
-            timer.parentElement.parentElement.classList.add('bg-secondary');
-            return;
+// 1. 🕒 LIVE SYSTEM COUNTDOWN
+function initTimers() {
+    setInterval(() => {
+        const timers = document.querySelectorAll('.timer-text');
+        timers.forEach(timer => {
+            let timeArray = timer.innerText.split(':');
+            let totalSeconds = (+timeArray[0]) * 3600 + (+timeArray[1]) * 60 + (+timeArray[2]);
+
+            if (totalSeconds > 0) {
+                totalSeconds--;
+                let h = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
+                let m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+                let s = (totalSeconds % 60).toString().padStart(2, '0');
+                timer.innerText = `${h}:${m}:${s}`;
+            } else {
+                timer.closest('.deal-card-compact').style.opacity = '0.5';
+                timer.innerText = "EXPIRED";
+            }
+        });
+    }, 1000);
+}
+
+// 2. ❤️ WISHLIST LOGIC (LocalStorage)
+let wishlist = JSON.parse(localStorage.getItem('fspro_wishlist')) || [];
+
+function handleWishlist(btn, id) {
+    const index = wishlist.indexOf(id.toString());
+    
+    if (index === -1) {
+        wishlist.push(id.toString());
+        btn.classList.add('active');
+        btn.innerHTML = '<i class="fa-solid fa-heart-circle-check text-danger"></i>';
+    } else {
+        wishlist.splice(index, 1);
+        btn.classList.remove('active');
+        btn.innerHTML = '<i class="fa-solid fa-heart"></i>';
+    }
+
+    localStorage.setItem('fspro_wishlist', JSON.stringify(wishlist));
+    updateWishlistUI();
+}
+
+function updateWishlistUI() {
+    const countBadge = document.getElementById('wishlist-count');
+    if (countBadge) countBadge.innerText = wishlist.length;
+}
+
+// Ensures icons stay red if already in wishlist on page load
+function syncWishlistStates() {
+    const wishlistButtons = document.querySelectorAll('.wishlist-btn-mini');
+    wishlistButtons.forEach(btn => {
+        const id = btn.getAttribute('data-id');
+        if (wishlist.includes(id)) {
+            btn.classList.add('active');
+            btn.innerHTML = '<i class="fa-solid fa-heart-circle-check text-danger"></i>';
         }
-
-        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-        timer.innerHTML = `${hours}h ${minutes}m ${seconds}s`;
     });
 }
 
-// Run the clock every 1 second
-setInterval(updateTimers, 1000);
-updateTimers();
+// 🟢 WHATSAPP SMART SHARE
+async function shareDeal(title, url) {
+    const fullUrl = window.location.origin + url;
+    const shareText = `🔥 Check this ELITE DROP: ${title} \n\n🔗 ${fullUrl}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+}

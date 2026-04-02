@@ -1,21 +1,186 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin - Add Deal</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Add Deal | FlashSale Pro Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 </head>
-<body class="p-5">
-    <div class="container" style="max-width: 600px;">
-        <h2>Add New Flash Sale</h2>
-        <form method="POST">
-            <input type="text" name="product_name" class="form-control mb-2" placeholder="Product Name" required>
-            <input type="number" step="0.01" name="original_price" class="form-control mb-2" placeholder="Original Price" required>
-            <input type="number" step="0.01" name="sale_price" class="form-control mb-2" placeholder="Sale Price" required>
-            <input type="text" name="affiliate_url" class="form-control mb-2" placeholder="Affiliate Link" required>
-            <input type="text" name="image_url" class="form-control mb-2" placeholder="Image URL" required>
-            <input type="datetime-local" name="expiry_time" class="form-control mb-2" required>
-            <button type="submit" class="btn btn-success w-100">Publish Deal 🚀</button>
-        </form>
+<body class="bg-dark-smooth admin-body"> 
+    <div class="container py-3 py-md-4">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show mb-3 border-0 shadow-sm" role="alert">
+                                <i class="fa-solid {% if category == 'success' %}fa-check-circle{% else %}fa-circle-exclamation{% endif %} me-2"></i>
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <div class="glass-card p-3 p-md-4 mb-3 border-start border-warning border-4">
+                    <div class="d-flex align-items-center justify-content-between gap-2">
+                        <div style="flex: 1;">
+                            <h6 class="text-white mb-1"><i class="fa-solid fa-bolt text-warning me-2"></i>Auto-Pilot</h6>
+                            <p class="text-muted x-small mb-0 d-none d-md-block">Fetch 20+ fresh Fashion & Tech deals instantly via API.</p>
+                            <p class="text-muted x-small mb-0 d-md-none">Fetch fresh deals instantly via API.</p>
+                        </div>
+                        <a href="{{ url_for('admin_sync') }}" class="btn btn-warning fw-bold rounded-pill shadow-sm btn-sync-compact" onclick="this.innerHTML='<i class=\'fa-solid fa-sync fa-spin\'></i> Wait...';">
+                            <i class="fa-solid fa-rotate me-md-2"></i> <span class="d-none d-md-inline">SYNC NOW</span><span class="d-md-none">SYNC</span>
+                        </a>
+                    </div>
+                </div>
+
+                {% if session.get('last_sync_batch') %}
+                <div class="glass-card p-2 p-md-3 mb-4 border-start border-danger border-4 animate__animated animate__fadeIn">
+                    <div class="d-flex align-items-center justify-content-between gap-2">
+                        <div style="flex: 1;">
+                            <h6 class="text-white mb-0 x-small fw-bold"><i class="fa-solid fa-circle-info text-danger me-2"></i>Recent Sync Detected</h6>
+                            <p class="text-muted" style="font-size: 0.6rem; margin-bottom: 0;">Did something go wrong? You can wipe the last API import.</p>
+                        </div>
+                        <a href="{{ url_for('undo_sync') }}" class="btn btn-outline-danger btn-sm rounded-pill fw-bold px-3" style="font-size: 0.65rem;" onclick="return confirm('Are you sure? This will delete ALL deals from the last API sync.');">
+                            <i class="fa-solid fa-arrow-rotate-left me-1"></i> UNDO
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="glass-card p-3 p-md-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
+                        <div>
+                            <h2 class="fw-bold m-0 text-white fs-4">Create <span class="text-warning">Flash Deal</span></h2>
+                            <p class="text-muted x-small mb-0">Fill in details for a manual sale.</p>
+                        </div>
+                        <a href="/login" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                            <i class="fa-solid fa-arrow-left me-1"></i> <span class="d-none d-sm-inline">Back</span>
+                        </a>
+                    </div>
+
+                    <form method="POST" id="dealForm">
+                        <div class="row g-3 g-md-4">
+                            <div class="col-md-7">
+                                <div class="mb-3">
+                                    <label class="admin-label">Product Name</label>
+                                    <input type="text" name="product_name" class="form-control admin-input admin-input-sm" placeholder="e.g. Sony WH-1000XM5" required>
+                                </div>
+                                
+                                <div class="row g-2">
+                                    <div class="col-6 mb-3">
+                                        <label class="admin-label">Original ($)</label>
+                                        <input type="number" step="0.01" id="orig_price" name="original_price" class="form-control admin-input admin-input-sm" placeholder="399" required>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <label class="admin-label">Sale Price ($)</label>
+                                        <input type="number" step="0.01" id="sale_price" name="sale_price" class="form-control admin-input admin-input-sm" placeholder="299" required>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="admin-label">Affiliate Link</label>
+                                    <input type="url" name="affiliate_url" class="form-control admin-input admin-input-sm" placeholder="https://..." required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="admin-label">Image URL</label>
+                                    <input type="text" id="img_url_input" name="image_url" class="form-control admin-input admin-input-sm" placeholder="Paste link" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="preview-box mb-3 text-center d-flex align-items-center justify-content-center border border-secondary rounded" style="height: 150px; background: rgba(0,0,0,0.2);">
+                                    <img id="img_preview" src="" alt="Preview" class="img-fluid d-none" style="max-height: 100%; border-radius: 8px;">
+                                    <div id="preview_placeholder" class="text-muted x-small">
+                                        <i class="fa-solid fa-image fa-2x mb-2 d-block"></i>
+                                        Preview
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="admin-label">Category</label>
+                                    <select name="category" class="form-select admin-input admin-input-sm" required>
+                                        <option value="Tech">Tech 📱</option>
+                                        <option value="Fashion">Fashion 👕</option>
+                                        <option value="Home">Home 🏠</option>
+                                        <option value="Gaming">Gaming 🎮</option>
+                                        <option value="Beauty">Beauty 💄</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="admin-label">Expiry Time</label>
+                                    <input type="datetime-local" name="expiry_time" class="form-control admin-input admin-input-sm" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mt-1">
+                                <div class="social-proof-section p-2 p-md-3 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                                    <h6 class="text-warning mb-2 fw-bold x-small" style="font-size: 0.65rem;"><i class="fa-solid fa-users me-2"></i>SOCIAL PROOF</h6>
+                                    <div class="row g-2">
+                                        <div class="col-4">
+                                            <label class="admin-label" style="font-size: 0.55rem;">Rating</label>
+                                            <input type="number" step="0.1" name="rating" class="form-control admin-input admin-input-sm px-2" value="4.5" style="font-size: 0.75rem;">
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="admin-label" style="font-size: 0.55rem;">Reviews</label>
+                                            <input type="number" name="review_count" class="form-control admin-input admin-input-sm px-2" value="128" style="font-size: 0.75rem;">
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="admin-label" style="font-size: 0.55rem;">Views</label>
+                                            <input type="number" name="base_views" class="form-control admin-input admin-input-sm px-2" value="15" style="font-size: 0.75rem;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-warning w-100 py-2 py-md-3 fw-bold shadow-sm">
+                                    <i class="fa-solid fa-rocket me-2"></i> PUBLISH DEAL
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <footer class="mt-4 pb-5 text-center">
+                    <hr class="border-secondary opacity-25">
+                    <p class="x-small mb-1">FlashSale Pro Admin Panel</p>
+                    <p class="" style="font-size: 0.6rem;">© 2026 Internal Tools Only</p>
+                </footer>
+
+            </div>
+        </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const imgInput = document.getElementById('img_url_input');
+        const imgPreview = document.getElementById('img_preview');
+        const placeholder = document.getElementById('preview_placeholder');
+
+        imgInput.addEventListener('input', function() {
+            if (this.value) {
+                imgPreview.src = this.value;
+                imgPreview.classList.remove('d-none');
+                placeholder.classList.add('d-none');
+            } else {
+                imgPreview.classList.add('d-none');
+                placeholder.classList.remove('d-none');
+            }
+        });
+
+        imgPreview.onerror = function() {
+            this.classList.add('d-none');
+            placeholder.classList.remove('d-none');
+            placeholder.innerHTML = '<i class="fa-solid fa-circle-exclamation text-danger fa-2x mb-2 d-block"></i> Invalid';
+        };
+    </script>
 </body>
 </html>

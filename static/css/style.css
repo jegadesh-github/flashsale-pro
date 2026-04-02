@@ -1,354 +1,515 @@
-/* --- Global Variables --- */
+/* ========================================
+   💎 ELITE DROPS: UNIFIED MASTER UI 2026
+   ======================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Outfit:wght@500;700;800&family=JetBrains+Mono:wght@500&display=swap');
+
 :root {
-    --new-price: #83f659;
-    --primary-yellow: #f9ba00;
-    --dark-bg: #1f0f2a;
-    --card-bg: #1e293b;
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
+    --bg-black: #020203;
+    --card-glass: rgba(17, 17, 19, 0.85);
+    --border-glass: rgba(255, 255, 255, 0.08);
+    --neon-gold: #f9ba00;
+    --neon-cyan: #00f2ff;
+    --neon-red: #ff3e3e;
+    --whatsapp-green: #25D366;
 }
+
+/* 🌌 Global Canvas */
 body {
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    color: #f8fafc;
-    font-family: 'Inter', sans-serif;
-
-    /* --- THE MESH GRADIENT --- */
-    /* Base Color: Deep Navy */
-    background-color: #020617; 
-    
-    /* Layer 1: Top Left Blue Glow */
-    /* Layer 2: Bottom Right Darker Navy */
-    /* Layer 3: Center Top Subtle Cyan Glow */
+    background: var(--bg-black);
     background-image: 
-        radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.4) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(15, 23, 42, 1) 0px, transparent 50%),
-        radial-gradient(at 50% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%);
-    
-    background-attachment: fixed; /* Keeps the glow in place as you scroll */
+        radial-gradient(circle at 50% 0%, #1a1a2e 0%, transparent 50%),
+        radial-gradient(circle at 0% 100%, #0f172a 0%, transparent 30%);
+    background-attachment: fixed;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
 }
 
-/* Optional: Add a subtle 'noise' overlay to prevent color banding */
-body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0.03; /* Very faint */
-    pointer-events: none;
-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");    z-index: 1;
-}
-h1, h2, h3, h4, h5, h6 {
-    color: var(--text-main) !important; 
-    font-weight: 700;
-    color: orangered;
-}
-.custom-nav {
-    background: rgba(15, 23, 42, 0.8) !important; /* Semi-transparent dark blue */
-    backdrop-filter: blur(12px) saturate(180%); /* The 'iOS' Glass effect */
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 12px 0;
-}
-
-.brand-icon {
-    font-size: 1.4rem;
-    filter: drop-shadow(0 0 8px rgba(255, 193, 7, 0.6));
+h1, h2, h3, h4, h5, .brand-text {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
 }
 
 .brand-text {
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    font-size: 1.1rem;
+    letter-spacing: 1px;
+    font-size: 1.4rem;
+    background: linear-gradient(to right, #fff, var(--neon-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-/* The Admin Button as a 'Pill' */
-.admin-pill {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50px;
-    padding: 6px 15px !important;
-    transition: all 0.3s ease;
-    color: var(--text-main) !important;
-}
-
-.admin-pill:hover {
-    background: var(--primary-yellow);
-    color: #000 !important;
-}
-/* --- Hero Section --- */
-.hero {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    padding: 80px 0;
-    border-bottom: 1px solid #334155;
-    text-align: center;
-}
-/* --- Glass Search Box --- */
-.search-box {
-    position: relative;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    padding: 5px;
+/* 🏎️ TOP TICKER */
+.trending-ticker-wrap {
+    background: #000;
+    border-bottom: 1px solid var(--border-glass);
     display: flex;
-}
-
-.search-box input {
-    background: transparent;
-    border: none;
-    color: white;
-    padding: 10px 15px;
-    width: 100%;
-}
-
-.search-box input:focus {
-    background: transparent;
-    color: white;
-    box-shadow: none;
-}
-
-.btn-search {
-    background: var(--primary-yellow);
-    border: none;
-    border-radius: 10px;
-    padding: 5px 15px;
-}
-
-/* --- Category Pills --- */
-.badge-pill {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--text-muted);
-    padding: 8px 20px;
-    border-radius: 50px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.3s ease;
-    
-}
-
-.badge-pill:hover, .badge-pill.active {
-    background: var(--primary-yellow);
-    color: #000;
-    border-color: var(--primary-yellow);
-    font-weight: 700;
-}
-
-/* Hide scrollbar for category row */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* --- Deal Cards --- */
-/* --- Modern Glass Card Design --- */
-/* 1. Force the Column to stretch the Card */
-.row > [class*='col-'] {
-    display: flex;
-    flex-direction: column;
-}
-
-/* 2. Make the Card fill the full height of the Column */
-.deal-card {
-    display: flex;
-    flex-direction: column;
-    height: 100%; /* Forces card to expand */
-    background: rgba(30, 41, 59, 0.7);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
-    padding: 20px;
-}
-
-/* 3. The "Content Wrapper" pushes the button to the bottom */
-.card-body {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1; /* This pushes the footer/button down */
-}
-
-/* 4. Multi-line Text Truncation (The "Pro" Trick) */
-.card-title {
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Shows exactly 2 lines of text */
-    -webkit-box-orient: vertical;
     overflow: hidden;
-    height: 3rem; /* Fixed height for the title area (1.5rem x 2) */
-    margin-bottom: 10px;
-    color: white;
+    height: 40px;
+    align-items: center;
 }
 
-/* 5. Ensure images always sit in the same sized space */
-/* --- Updated Card Image Container --- */
-.card-img-container {
-    background: radial-gradient(circle, rgba(255,193,7,0.15) 0%, rgba(15,23,42,0) 70%);
-    height: 180px; /* Consistent height */
-    border-radius: 18px;
-    margin-bottom: 20px;
-    
-    /* NEW: Handle content positioning */
+.ticker-title {
+    background: var(--neon-red);
+    color: white;
+    padding: 0 15px;
+    height: 100%;
     display: flex;
-    align-items: center;    /* Center vertically */
-    justify-content: center; /* Center horizontally */
-    position: relative;     /* Establishes positioning context for the tag */
-    overflow: hidden;       /* Keeps everything inside the rounded corners */
-}
-
-/* --- Updated Alternative Text Styling --- */
-.card-img-container img {
-    max-height: 85%;
-    max-width: 85%;
-    object-fit: contain;
-    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
-    
-    /* NEW: Styling specifically for when only Alt text shows */
-    color: var(--text-muted); /* Make alt text subtle */
-    font-size: 0.9rem;
-    font-style: italic;
-    text-align: center;
-    line-height: 1.3;
-    
-    /* Ensure alt text doesn't touch the edges */
-    padding: 10px; 
-}
-/* Floating Discount Badge */
-/* --- Updated Discount Tag --- */
-.discount-tag {
-    position: absolute;
-    top: 15px;
-    right: 15px; /* Keep it in the top right corner */
-    background: #ef4444; /* Red */
-    color: white;
-    padding: 6px 14px;
-    border-radius: 50px;
+    align-items: center;
     font-weight: 800;
-    font-size: 0.8rem;
-    z-index: 10; /* Ensures it stays on top of any alt text */
-    text-transform: uppercase;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-}
-/* Pricing Section */
-.price-large {
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: var(--new-price);
-    margin-right: 10px;
-}
-
-.price-old {
-    color: var(--text-muted);
-    text-decoration: line-through;
-    font-size: 1rem;
-}
-
-/* Modern Rounded Button */
-.buy-btn {
-    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
-    border: none;
-    border-radius: 14px;
-    padding: 14px;
-    color: #000;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    transition: transform 0.2s;
-}
-
-.buy-btn:hover {
-    transform: scale(1.03);
-    background: #ffc107;
-}
-/* --- Hot Deal Glow Animation --- */
-@keyframes price-pulse {
-    0% { text-shadow: 0 0 5px rgba(255, 193, 7, 0.2); }
-    50% { text-shadow: 0 0 20px rgba(255, 193, 7, 0.6); }
-    100% { text-shadow: 0 0 5px rgba(255, 193, 7, 0.2); }
-}
-
-.hot-price {
-    color: #ffc107 !important;
-    animation: price-pulse 2s infinite ease-in-out;
-}
-
-/* --- Hot Badge Styling --- */
-.hot-badge {
-    background: linear-gradient(45deg, #f59e0b, #ef4444);
-    color: white;
     font-size: 0.7rem;
-    font-weight: 800;
+    letter-spacing: 1px;
+    z-index: 2;
+}
+
+.ticker-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 40s linear infinite;
+}
+
+.ticker-item {
+    color: #94a3b8;
+    padding: 0 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+/* 🧭 NAVIGATION STICKY BACKGROUND */
+.custom-nav {
+    transition: all 0.3s ease;
+    background: transparent;
+    border-bottom: 1px solid transparent;
+}
+
+.custom-nav.scrolled {
+    background: rgba(2, 2, 3, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-glass);
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* 🔍 SEARCH BOX SPACING UPDATE */
+.search-box-slim {
+    margin-bottom: 3.5rem !important; 
+}
+
+/* 💊 CATEGORY PILLS WITH GLOW EFFECT */
+.badge-pill-modern {
+    padding: 8px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-glass);
+    border-radius: 50px;
+    color: #94a3b8;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-pill-modern:hover {
+    color: var(--neon-cyan);
+    border-color: var(--neon-cyan);
+    background: rgba(0, 242, 255, 0.05);
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+}
+
+.badge-pill-modern.active {
+    background: var(--neon-cyan);
+    color: #000;
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+    border: none;
+}
+
+/* 🏆 ELITE INFINITE CAROUSEL & BIG CARDS */
+.elite-carousel-wrapper {
+    overflow: hidden;
+    position: relative;
+    padding: 20px 0;
+}
+
+.elite-track {
+    display: flex;
+    width: max-content;
+    gap: 20px;
+    animation: elite-slide 30s linear infinite;
+}
+
+.elite-track:hover {
+    animation-play-state: paused;
+}
+
+@keyframes elite-slide {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.elite-hero-card-container {
+    flex: 0 0 300px; 
+}
+
+.elite-hero-card {
+    height: 280px !important;
+    border: 1px solid rgba(249, 186, 0, 0.15) !important;
+    background: linear-gradient(145deg, rgba(20,20,25,0.9) 0%, rgba(10,10,12,1) 100%) !important;
+    overflow: hidden;
+    padding: 15px !important;
+    position: relative;
+    transition: 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.elite-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--neon-gold);
+    color: #000;
+    font-size: 0.6rem;
+    font-weight: 900;
     padding: 2px 8px;
     border-radius: 4px;
-    text-transform: uppercase;
-    margin-left: 10px;
-    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-}
-.custom-footer {
-    background: rgba(15, 23, 42, 0.6); /* Slightly more transparent than the Nav */
-    backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    color: var(--text-muted);
+    z-index: 5;
 }
 
-.footer-text {
-    font-size: 0.9rem;
-    letter-spacing: 0.3px;
+.stock-bar {
+    width: 60px;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-.extra-small {
-    font-size: 0.7rem;
-    opacity: 0.6;
+.stock-progress {
+    height: 100%;
+    background: var(--neon-cyan);
+    box-shadow: 0 0 10px var(--neon-cyan);
 }
 
-.footer-links a:hover {
-    color: var(--primary-yellow) !important;
+.elite-hover-info {
+    position: absolute;
+    bottom: -60px;
+    left: 0;
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(to top, #000 70%, transparent);
+    transition: 0.4s ease;
+    opacity: 0;
+    z-index: 10;
 }
-@media (max-width: 767.98px) {
-    .custom-nav {
-        padding: 10px 0;
-    }
-    
-    .brand-text {
-        font-size: 1rem; /* Prevent wrapping on small screens */
-    }
 
-    .admin-pill {
-        padding: 5px 12px !important;
-        font-size: 0.9rem;
-    }
-    /* Center the header for mobile */
-    h2.fw-bold {
-        font-size: 1.6rem !important;
-        text-align: center;
-    }
-    p.text-secondary {
-        text-align: center;
-        margin-bottom: 30px;
-    }
+.elite-hero-card:hover .elite-hover-info {
+    bottom: 0;
+    opacity: 1;
+}
 
-    /* Make the cards slightly more compact on mobile */
-    .deal-card {
-        padding: 15px;
-        border-radius: 20px;
-    }
+.elite-hero-card:hover {
+    border-color: var(--neon-gold) !important;
+    box-shadow: 0 0 30px rgba(249, 186, 0, 0.25);
+    transform: translateY(-10px) scale(1.02);
+}
 
-    .card-img-container {
-        height: 125px; /* Shorter image area to see more content */
-    }
+/* 🔥 TRENDING VERTICAL SYSTEM */
+.trending-viewport {
+    height: 480px;
+    overflow: hidden;
+    position: relative;
+    mask-image: linear-gradient(to bottom, transparent, black 8%, black 92%, transparent);
+}
 
-    .price-large {
-        font-size: 1.5rem;
-    }
+.trending-vertical-track {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    animation: trend-vertical-slide 25s linear infinite;
+}
 
-    /* Bigger "Thumb-Friendly" Button */
-    .buy-btn {
-        padding: 16px;
-        font-size: 1.1rem;
+.trending-vertical-track:hover { animation-play-state: paused; }
+
+@keyframes trend-vertical-slide {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+}
+
+.trending-mid-card {
+    height: 180px !important;
+    flex-direction: row !important;
+    padding: 12px !important;
+    background: rgba(15, 15, 20, 0.95) !important;
+    border: 1px solid var(--border-glass) !important;
+    position: relative;
+}
+
+.card-img-container-mid {
+    width: 140px;
+    height: 100%;
+    background: #000;
+    border-radius: 8px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.card-img-container-mid img { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
+
+.card-actions-stack {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 10;
+}
+
+.action-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.05);
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+
+.whatsapp-btn:hover { background: var(--whatsapp-green); color: white; }
+.wishlist-btn:hover { background: var(--neon-red); color: white; }
+
+.card-tags {
+    position: absolute;
+    top: -8px;
+    left: 10px;
+    display: flex;
+    gap: 5px;
+    z-index: 11;
+}
+
+.badge-hot { background: var(--neon-red); color: white; font-size: 0.55rem; padding: 2px 6px; border-radius: 4px; font-weight: 800; }
+.category-tag { background: var(--neon-cyan); color: #000; font-size: 0.55rem; padding: 2px 6px; border-radius: 4px; font-weight: 800; }
+
+.discount-pill {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: var(--neon-gold);
+    color: #000;
+    font-size: 0.65rem;
+    font-weight: 900;
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+.price-deal { font-family: 'Outfit'; font-weight: 800; font-size: 1.1rem; color: var(--neon-cyan); }
+.timer-box { font-size: 0.65rem; color: #64748b; font-family: 'JetBrains Mono'; }
+
+.btn-go-link {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--neon-cyan);
+    text-decoration: none;
+    padding: 4px 8px;
+    border: 1px solid var(--neon-cyan);
+    border-radius: 4px;
+    transition: 0.3s;
+}
+
+.btn-go-link:hover { background: var(--neon-cyan); color: #000; }
+
+/* 📊 UPDATED: DYNAMIC GRID SYSTEM (FORCE STRETCH) */
+.product-grid {
+    display: grid !important;
+    gap: 15px;
+    /* We use auto-fit instead of auto-fill to force expansion */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    width: 100% !important;
+    justify-content: stretch !important;
+    align-content: start;
+}
+
+/* This ensures the individual cards don't have a hidden max-width */
+.product-grid .mini-card, 
+.product-grid .deal-card-compact {
+    width: 100% !important;
+    max-width: none !important;
+    flex: 1 1 auto;
+}
+
+/* 💎 THE MINI-CARD (Unified DNA) */
+.mini-card, .deal-card-compact {
+    background: rgba(20, 20, 25, 0.7);
+    border: 1px solid var(--border-glass);
+    border-radius: 12px;
+    padding: 10px;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none !important;
+}
+
+/* 🖼️ UNIFIED IMAGE WRAP */
+.img-mini-wrap, .card-img-container-mini {
+    height: 110px;
+    background: #000;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+}
+
+.img-mini-wrap img, .card-img-container-mini img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+/* 🎯 TEXT & PRICE FOCUS */
+.card-label, .card-title-mini {
+    font-size: 0.75rem !important;
+    font-weight: 600;
+    color: #cbd5e1;
+    margin-bottom: 8px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 32px;
+}
+
+.price-stack {
+    margin-top: auto;
+    line-height: 1.1;
+}
+
+.sale-price, .price-medium {
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.1rem !important;
+    font-family: 'Outfit', sans-serif;
+}
+
+.original-price {
+    color: #64748b;
+    text-decoration: line-through;
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* ✨ LAYER HOVER SYSTEM */
+.layer-elite { border: 1px solid rgba(249, 186, 0, 0.15) !important; }
+.layer-elite:hover {
+    border-color: var(--neon-gold) !important;
+    box-shadow: 0 0 20px rgba(249, 186, 0, 0.25);
+    transform: translateY(-5px);
+}
+
+.layer-standard { border: 1px solid rgba(0, 242, 255, 0.1) !important; }
+.layer-standard:hover {
+    border-color: var(--neon-cyan) !important;
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.25);
+    transform: translateY(-5px);
+}
+
+.layer-critical { border: 1px solid rgba(255, 62, 62, 0.15); }
+.layer-critical:hover {
+    border-color: var(--neon-red);
+    box-shadow: 0 0 20px rgba(255, 62, 62, 0.25);
+    transform: translateY(-5px);
+}
+
+/* 🏷️ MISC UI */
+.x-small { font-size: 0.6rem; letter-spacing: 0.05em; color: #64748b; }
+
+/* 🏛️ FOOTER */
+.footer-modern { background: #050507; border-top: 1px solid var(--border-glass); }
+.footer-links a { color: #64748b; text-decoration: none; transition: 0.3s; font-size: 0.9rem; }
+.footer-links a:hover { color: var(--neon-cyan); }
+.text-cyan { color: #00f2ff; text-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
+.btn-outline-cyan {
+    border: 2px solid #00f2ff;
+    color: #00f2ff;
+    transition: all 0.3s ease;
+}
+.btn-outline-cyan:hover {
+    background: #00f2ff;
+    color: #000;
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
+}
+
+/* 📱 MOBILE FIXES */
+@media (max-width: 768px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px;
     }
-    .custom-footer {
-        padding: 30px 0; /* More vertical breathing room for mobile thumbs */
-    }
-    
-    .footer-text {
-        font-size: 0.8rem;
-    }
+    .display-5 { font-size: 1.8rem; }
+    .elite-hero-card-container { flex: 0 0 260px; }
+}
+
+/* --- Wishlist Specific Styles --- */
+.wishlist-btn.wishlist-active {
+    background: rgba(255, 59, 48, 0.2) !important;
+    border-color: rgba(255, 59, 48, 0.4) !important;
+}
+
+.wishlist-btn.wishlist-active i {
+    color: #ff3b30 !important;
+    text-shadow: 0 0 10px rgba(255, 59, 48, 0.6);
+}
+
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.action-btn.text-danger {
+    background: rgba(255, 59, 48, 0.1);
+    border: 1px solid rgba(255, 59, 48, 0.2);
+    transition: all 0.3s ease;
+}
+
+.action-btn.text-danger:hover {
+    background: #ff3b30;
+    color: white !important;
+    transform: scale(1.1);
+}
+
+#empty-wishlist {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    margin-top: 100px;
+    padding: 60px 20px;
+}
+
+#wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding-bottom: 50px;
+}
+
+.mini-card {
+    animation: fadeInSlide 0.4s ease forwards;
+}
+
+@keyframes fadeInSlide {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }

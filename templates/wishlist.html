@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Wishlist | Elite Drops</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body class="bg-dark text-white">
+
+    <nav class="navbar navbar-dark custom-nav scrolled">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <div class="brand-text">ELITE<span class="text-cyan">DROPS</span></div>
+            </a>
+            <a href="/" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-arrow-left me-2"></i>Back to Drops</a>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2 class="display-6"><i class="fa-solid fa-heart text-danger me-3"></i>Saved <span class="text-cyan">Inventory</span></h2>
+                <p class="text-secondary">Your personal selection of high-performance deals.</p>
+            </div>
+        </div>
+
+        <div id="wishlist-grid" class="product-grid">
+            </div>
+
+        <div id="empty-wishlist" class="text-center py-5 d-none">
+            <i class="fa-solid fa-box-open fa-3x mb-3 opacity-25"></i>
+            <h4 class="text-secondary">Your wishlist is empty</h4>
+            <a href="/" class="btn btn-warning mt-3 fw-bold px-4">EXPLORE DEALS</a>
+        </div>
+    </div>
+
+    <script>
+        function renderWishlist() {
+            const wishlist = JSON.parse(localStorage.getItem('elite_wishlist')) || [];
+            const grid = document.getElementById('wishlist-grid');
+            const emptyState = document.getElementById('empty-wishlist');
+
+            if (wishlist.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('d-none');
+                return;
+            }
+
+            emptyState.classList.add('d-none');
+            grid.innerHTML = wishlist.map(item => `
+                <div class="mini-card layer-standard" id="wish-item-${item.id}">
+                    <div class="card-actions-stack">
+                        <button class="action-btn text-danger" onclick="removeFromWishlist('${item.id}')">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+
+                    <a href="/go/${item.id}" class="img-mini-wrap">
+                        <img src="${item.img}" alt="${item.name}">
+                    </a>
+
+                    <div class="card-content-wrap mt-2">
+                        <a href="/go/${item.id}" class="card-label m-0 d-block text-truncate">${item.name}</a>
+                        <div class="price-stack mt-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="sale-price text-cyan">$${item.price}</span>
+                                <a href="/go/${item.id}" class="btn-go-link">GET IT</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function removeFromWishlist(id) {
+            let wishlist = JSON.parse(localStorage.getItem('elite_wishlist')) || [];
+            wishlist = wishlist.filter(item => item.id !== id);
+            localStorage.setItem('elite_wishlist', JSON.stringify(wishlist));
+            renderWishlist(); // Refresh the grid
+        }
+
+        // Initial Load
+        document.addEventListener('DOMContentLoaded', renderWishlist);
+    </script>
+</body>
+</html>

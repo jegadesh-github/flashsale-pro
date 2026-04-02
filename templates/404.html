@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Lost in the Flash | FlashSale Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet" />
+    <style>
+        :root { --glass: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
+        body { background: #0f0f0f; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; min-height: 100vh; display: flex; align-items: center; }
+        
+        /* 1. Radar Animation */
+        .radar-container { position: relative; width: 150px; height: 150px; margin: 0 auto 30px; }
+        .radar-circle { position: absolute; width: 100%; height: 100%; border: 2px solid #ffc107; border-radius: 50%; opacity: 0; animation: pulse 2s infinite; }
+        .radar-circle:nth-child(2) { animation-delay: 0.5s; }
+        .radar-circle:nth-child(3) { animation-delay: 1s; }
+        .radar-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem; color: #ffc107; text-shadow: 0 0 20px rgba(255, 193, 7, 0.5); }
+        @keyframes pulse { 0% { transform: scale(0.5); opacity: 0.8; } 100% { transform: scale(1.5); opacity: 0; } }
+
+        /* Glassmorphism Card */
+        .error-card { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 24px; padding: 40px; text-align: center; max-width: 600px; width: 90%; margin: auto; }
+        
+        /* 3. Search Bar */
+        .search-404 { background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 50px; padding: 5px 20px; margin-top: 20px; }
+        .search-404 input { background: transparent; border: none; color: white; padding: 10px; width: 100%; outline: none; }
+
+        /* 4. Suggestions Snippet */
+        .suggestion-chip { background: rgba(255,255,255,0.07); border-radius: 12px; padding: 10px; transition: 0.3s; text-decoration: none; display: flex; align-items: center; margin-bottom: 10px; border: 1px solid transparent; }
+        .suggestion-chip:hover { background: rgba(255,255,255,0.12); border-color: #ffc107; transform: translateY(-2px); }
+        .suggestion-img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; margin-right: 12px; }
+
+        /* 6. Redirect Progress Bar */
+        .progress-container { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 30px; overflow: hidden; }
+        .progress-bar { width: 0%; height: 100%; background: #ffc107; transition: linear; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="error-card shadow-lg">
+        <div class="radar-container">
+            <div class="radar-circle"></div>
+            <div class="radar-circle"></div>
+            <div class="radar-circle"></div>
+            <div class="radar-icon"><i class="fa-solid fa-satellite-dish"></i></div>
+        </div>
+
+        <h1 class="fw-800 display-4 mb-2">404</h1>
+        <p class="text-secondary">Signal lost! This link has expired or never existed.</p>
+
+        <form action="/" method="GET" class="search-404 d-flex align-items-center mb-4">
+            <i class="fa-solid fa-magnifying-glass text-secondary"></i>
+            <input type="text" name="search" placeholder="Search for another deal...">
+        </form>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-4">
+            <a href="/" class="btn btn-warning fw-bold px-4 py-2 rounded-pill shadow">
+                <i class="fa-solid fa-house me-2"></i>BACK TO DASHBOARD
+            </a>
+        </div>
+
+        {% if suggestions %}
+        <div class="text-start mt-4">
+            <p class="small text-uppercase fw-bold text-warning mb-3">Live Deals You Missed:</p>
+            {% for deal in suggestions %}
+            <a href="/go/{{ deal.id }}" class="suggestion-chip">
+                <img src="{{ deal.image_url }}" class="suggestion-img">
+                <div class="flex-grow-1 text-truncate">
+                    <span class="text-white d-block small fw-bold">{{ deal.product_name }}</span>
+                    <span class="text-warning small">${{ deal.sale_price }}</span>
+                </div>
+                <i class="fa-solid fa-chevron-right text-secondary small"></i>
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="mt-4 p-2 rounded-3" style="background: rgba(0,0,0,0.2);">
+            <p class="small mb-0 text-secondary">
+                <i class="fa-solid fa-clock-rotate-left me-1"></i> 
+                Next Inventory Refresh in: <span class="text-white fw-bold">{{ sync_time }}</span>
+            </p>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="redirectBar"></div>
+        </div>
+        <p class="small text-muted mt-2">Auto-redirecting in <span id="timerText">10</span>s...</p>
+    </div>
+</div>
+
+<script>
+    // 6. Auto-Redirect Logic
+    let timeLeft = 10;
+    const bar = document.getElementById('redirectBar');
+    const text = document.getElementById('timerText');
+
+    const countdown = setInterval(() => {
+        timeLeft--;
+        text.innerText = timeLeft;
+        bar.style.width = ((10 - timeLeft) * 10) + '%';
+        
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            window.location.href = "/";
+        }
+    }, 1000);
+</script>
+
+</body>
+</html>

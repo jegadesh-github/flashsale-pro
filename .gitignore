@@ -1,0 +1,15 @@
+# Local environment variables (KEEP THIS PRIVATE!)
+.env
+
+# Python virtual environment
+venv/
+env/
+ENV/
+
+# Python cache (keeps your repo clean)
+__pycache__/
+*.pyc
+
+# OS specific files
+.DS_Store
+Thumbs.db

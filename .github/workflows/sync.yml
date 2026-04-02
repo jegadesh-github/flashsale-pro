@@ -1,0 +1,10 @@
+  name: Hourly Deal Sync
+on:
+  schedule:
+    - cron: '0 */6 * * *' # Every 6 hours
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Sync
+        run: curl -s http://your-live-website.com/cron/sync/your-token-here

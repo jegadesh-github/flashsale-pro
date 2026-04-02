@@ -2,123 +2,424 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FlashSale Pro | Best Daily Deals & Tech Discounts 2026</title>
-    <meta name="title" content="FlashSale Pro | Best Daily Deals & Tech Discounts 2026" />
-    <meta name="description" content="Get the hottest daily deals, flash sales, and massive discounts on electronics, fashion, and more. Updated live every hour!" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta property="og:title" content="Elite Drops | Premium Daily Flash Sales" />
+    <meta property="og:image" content="URL_TO_YOUR_LOGO_HERE" />
+    <meta name="description" content="Curated premium deals and flash sales for the modern elite." />
+    <title>Elite Drops | Premium Deals 2026</title>
 
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://your-website-url.com/" />
-    <meta property="og:title" content="FlashSale Pro | Save Big on Daily Flash Sales" />
-    <meta property="og:description" content="Don't miss out! The best tech and lifestyle deals updated in real-time." />
-    <meta property="og:image" content="https://your-website-url.com/static/img/preview-thumbnail.jpg" />
-
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content="FlashSale Pro | Best Daily Deals" />
-    <meta property="twitter:description" content="Massive savings on the brands you love. Checked and verified daily." />
-
-    <meta name="keywords" content="flash sales, daily deals, online shopping, discounts, tech deals, cheap electronics" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <nav class="navbar sticky-top navbar-expand navbar-dark custom-nav mb-4">
-      <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="/">
-          <span class="brand-icon me-2">⚡</span>
-          <div class="brand-text">
-            FLASHSALE<span class="text-warning">PRO</span>
-          </div>
-        </a>
-
-        <ul class="navbar-nav ms-auto">
-          {% if session.get('logged_in') %}
-            <li class="nav-item me-2">
-              <a class="nav-link admin-pill" href="/admin">
-                <span class="d-none d-md-inline">Dashboard</span>
-                <span class="d-md-none">⚙️</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-danger" href="/logout">Logout</a>
-            </li>
-          {% endif %}
-        </ul>
+    <div class="trending-ticker-wrap">
+      <div class="ticker-title">LIVE DEALS</div>
+      <div class="ticker-content">
+        <div class="ticker-track">
+          {% for deal in hero_deals %}
+            <span class="ticker-item"><i class="fa-solid fa-bolt text-warning"></i> {{ deal.product_name }} @ <span class="text-white">${{ deal.sale_price | currency }}</span></span>
+          {% endfor %} {% for deal in hero_deals %}
+            <span class="ticker-item"><i class="fa-solid fa-bolt text-warning"></i> {{ deal.product_name }} @ <span class="text-white">${{ deal.sale_price | currency }}</span></span>
+          {% endfor %}
+        </div>
       </div>
-    </nav>
+    </div>
 
-    <div class="container">
-      <div class="row align-items-center mb-5">
-        <div class="col text-center text-md-start">
-          <h2 class="fw-bold text-white">Active Flash Sales</h2>
-          <p class="text-secondary">High-discount deals ending soon!</p>
+   <nav class="navbar navbar-expand-lg sticky-top navbar-dark custom-nav">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+      <div class="brand-text">ELITE<span class="text-cyan">DROPS</span></div>
+    </a>
+
+    <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto gap-lg-4 align-items-center">
+        <li class="nav-item">
+          <a class="nav-link {% if not current_category %}active{% endif %}" href="{{ url_for('index') }}">Latest Drops</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if current_category == 'Technology' %}active{% endif %}" href="/?category=Technology">Technology</a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('info_page', page_type='about') }}">Protocol</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link position-relative" href="{{ url_for('wishlist_page') }}">
+            <i class="fa-solid fa-heart text-danger me-1"></i> Wishlist
+            <span id="wishlist-count" class="badge rounded-pill bg-cyan ms-1" style="font-size: 0.65rem">0</span>
+          </a>
+        </li>
+
+        {% if session.get('is_admin') %}
+          <li class="nav-item">
+            <a class="nav-link text-cyan border border-cyan rounded px-3 ms-lg-2" href="{{ url_for('admin_dashboard') }}">
+              <i class="fa-solid fa-gauge-high me-1"></i>Admin Panel
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link opacity-75" href="{{ url_for('logout') }}"><i class="fa-solid fa-power-off me-1"></i>Logout</a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show m-3" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+    <div class="container mt-5">
+      <div class="row justify-content-center mb-5">
+        <div class="col-md-8 text-center">
+          <h1 class="display-5 mb-4">Curated for the <span class="text-cyan">Modern Elite</span></h1>
+          <form action="/" method="GET" class="search-box-slim p-1 mb-4">
+            <div class="input-group">
+              <input type="text" name="search" placeholder="Search product..." class="form-control border-0 bg-transparent text-white shadow-none ms-3" />
+              <button type="submit" class="btn btn-warning fw-bold px-4">SEARCH</button>
+            </div>
+          </form>
+          <div class="d-flex overflow-auto no-scrollbar gap-2 pb-2 justify-content-md-center">
+            <a href="/" class="badge-pill-modern {% if not current_category %}active{% endif %}">All Drops</a>
+            {% for cat in categories %}
+              <a href="/?category={{ cat }}" class="badge-pill-modern {% if current_category == cat %}active{% endif %}">{{ cat }}</a>
+            {% endfor %}
+          </div>
         </div>
       </div>
 
-      <div class="row g-4">
-        {% if deals %}
-          {% for deal in deals %}
-            <div class="col-12 col-md-6 col-lg-4">
-              <div class="deal-card">
-                <div class="discount-tag">{{ deal.discount_percentage }}% OFF</div>
+      {% if hero_deals %}
+        <section class="mb-5 elite-carousel-wrapper">
+          <h5 class="text-uppercase section-title mb-4"><i class="fa-solid fa-crown text-warning me-2"></i>Elite Choices</h5>
+          <div class="elite-track">
+            {% for deal in hero_deals %}
+              <div class="elite-hero-card-container">
+                <div class="deal-card-compact elite-hero-card">
+                  <div class="elite-badge">
+                    <i class="fa-solid fa-gem"></i> ELITE
+                  </div>
 
-                <div class="card-img-container">
-                  <img src="{{ deal.image_url }}" alt="{{ deal.product_name }}" />
+                  <div class="card-img-container-mini">
+                    <img src="{{ deal.image_url }}" alt="{{ deal.product_name }}" />
+                  </div>
+
+                  <div class="px-2">
+                    <h6 class="card-title-mini text-white mb-1">{{ deal.product_name }}</h6>
+                    <div class="d-flex justify-content-between align-items-end">
+                      <div>
+                        <div class="x-small text-secondary text-uppercase mb-1">Current Value</div>
+                        <div class="price-medium text-warning">${{ deal.sale_price | currency }}</div>
+                      </div>
+                      <div class="text-end">
+                        <div class="stock-bar-label x-small text-cyan mb-1">AVAILABILITY</div>
+                        <div class="stock-bar">
+                          <div class="stock-progress" style="width: 70%"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="elite-hover-info">
+                    <a href="/go/{{ deal.id }}" class="btn btn-warning btn-sm w-100 fw-bold">SECURE ACCESS</a>
+                  </div>
+                </div>
+              </div>
+            {% endfor %} {% for deal in hero_deals %}
+              <div class="elite-hero-card-container">
+                <div class="deal-card-compact elite-hero-card">
+                  <div class="elite-badge">
+                    <i class="fa-solid fa-gem"></i> ELITE
+                  </div>
+                  <div class="card-img-container-mini">
+                    <img src="{{ deal.image_url }}" alt="{{ deal.product_name }}" />
+                  </div>
+                  <div class="px-2">
+                    <h6 class="card-title-mini text-white mb-1">{{ deal.product_name }}</h6>
+                    <div class="d-flex justify-content-between align-items-end">
+                      <div>
+                        <div class="x-small text-secondary text-uppercase mb-1">Current Value</div>
+                        <div class="price-medium text-warning">${{ deal.sale_price | currency }}</div>
+                      </div>
+                      <div class="text-end">
+                        <div class="stock-bar-label x-small text-cyan mb-1">AVAILABILITY</div>
+                        <div class="stock-bar">
+                          <div class="stock-progress" style="width: 70%"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="elite-hover-info">
+                    <a href="/go/{{ deal.id }}" class="btn btn-warning btn-sm w-100 fw-bold">SECURE ACCESS</a>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %} {% if trending_deals %}
+        <section class="mb-5 trending-vertical-wrapper">
+          <h5 class="text-uppercase section-title mb-4"><i class="fa-solid fa-fire text-cyan me-2"></i>Trending Now</h5>
+
+          <div class="trending-viewport">
+            <div class="trending-vertical-track">
+              {% for deal in trending_deals %}
+                <div class="trending-card-container">
+                  <div class="deal-card-compact trending-mid-card">
+                    <div class="card-actions-stack">
+                      <button class="action-btn wishlist-btn" data-id="{{ deal.id }}" onclick="toggleWishlist(this, '{{ deal.id }}', '{{ deal.product_name }}', '{{ deal.sale_price }}', '{{ deal.image_url }}')"><i class="fa-regular fa-heart"></i></button>
+                      <a href="https://wa.me/?text=Check this deal: {{ deal.product_name }}" class="action-btn whatsapp-btn"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+
+                    <div class="card-tags">
+                      <span class="badge-hot"><i class="fa-solid fa-fire"></i> HOT</span>
+                      <span class="category-tag">{{ deal.category|default('Tech') }}</span>
+                    </div>
+
+                    <div class="card-img-container-mid">
+                      <img src="{{ deal.image_url }}" alt="{{ deal.product_name }}" />
+                      <div class="discount-pill">-{{ (100 - deal.sale_price / deal.original_price * 100)|round|int }}%</div>
+                    </div>
+
+                    <div class="px-2 mt-2">
+                      <h6 class="card-title-mid text-white">{{ deal.product_name }}</h6>
+
+                      <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="price-deal text-cyan">${{ deal.sale_price | currency }}</span>
+                        <span class="price-orig text-secondary text-decoration-line-through">${{ deal.original_price | currency }}</span>
+                      </div>
+
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="timer-box">
+                          <i class="fa-regular fa-clock me-1"></i>
+                          <span class="timer-text">04:12:05</span>
+                        </div>
+                        <a href="/go/{{ deal.id }}" class="btn-go-link">
+                          VIEW
+                          <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </section>
+      {% endif %}
+
+      <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+          <h5 class="text-uppercase section-title m-0 opacity-50"><span class="text-danger">●</span> Daily Flash Inventory</h5>
+          <span class="x-small text-secondary font-monospace d-none d-md-inline">GRID_V2.6_ACTIVE</span>
+        </div>
+
+        <div class="product-grid">
+          {% for deal in deals %}
+            <div class="mini-card {% if deal.is_critical %}
+                  layer-critical
+               {% elif deal.is_elite %}
+                  layer-elite
+               {% else %}
+                  layer-standard
+               {% endif %}"
+              id="card-{{ deal.id }}">
+              <div class="card-tags">
+                {% if deal.is_hot %}
+                  <span class="badge-hot">HOT</span>
+                {% endif %}
+                <span class="category-tag">{{ deal.category }}</span>
+              </div>
+
+              <div class="card-actions-stack">
+                <button class="action-btn wishlist-btn" data-id="{{ deal.id }}" onclick="toggleWishlist(this, '{{ deal.id }}', '{{ deal.product_name }}', '{{ deal.sale_price }}', '{{ deal.image_url }}')" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+                <a href="https://wa.me/?text=Check%20this%20deal:%20{{ deal.product_name }}%20at%20{{ request.url_root }}go/{{ deal.id }}" class="action-btn whatsapp-btn" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+              </div>
+
+              <a href="/go/{{ deal.id }}" class="img-mini-wrap"><img src="{{ deal.image_url }}" alt="{{ deal.product_name }}" /></a>
+
+              <div class="card-content-wrap mt-2">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                  <a href="/go/{{ deal.id }}" class="card-label m-0">{{ deal.product_name }}</a>
+                  <span class="badge bg-danger ms-2" style="font-size: 0.6rem; padding: 2px 4px">-{{ (100 - deal.sale_price / deal.original_price * 100)|round|int }}%</span>
                 </div>
 
-                <div class="card-body p-0 d-flex flex-column">
-                  <h5 class="card-title fw-bold text-white">{{ deal.product_name }}</h5>
-
-                  <div class="d-flex align-items-center mb-3">
-                    <span class="price-large">${{ deal.sale_price }}</span>
-                    <span class="price-old">${{ deal.original_price }}</span>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  <div class="stock-bar" style="width: 40px; height: 3px">
+                    <div class="stock-progress" style="width: 65%"></div>
                   </div>
+                  <span class="x-small text-info" style="font-size: 0.5rem; letter-spacing: 0.5px"><i class="fa-solid fa-eye me-1"></i>{{ [12, 24, 45, 8, 110]|random }} VIEWING</span>
+                </div>
 
-                  <div class="mb-4 small text-warning fw-bold text-">
-                    ⏱ Ending in:
-                    <span class="timer" data-expiry="{{ deal.expiry_time }}">...</span>
-                  </div>
-
-                  <div class="mt-auto">
-                    <a href="{{ url_for('buy_product', deal_id=deal.id) }}" target="_blank" class="btn buy-btn w-100">GET DEAL NOW</a>
+                <div class="price-stack">
+                  <div class="original-price">${{ deal.original_price | currency }}</div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="sale-price">${{ deal.sale_price | currency }}</span>
+                    <a href="/go/{{ deal.id }}" class="btn-go-link">GET IT</a>
                   </div>
                 </div>
               </div>
             </div>
           {% endfor %}
-        {% else %}
-          <div class="col-12 text-center py-5">
-            <div class="display-1 text-muted">📭</div>
-            <h3 class="text-muted mt-3">No active deals right now.</h3>
-            <p class="text-secondary">
-              Check back later or
-              <a href="/admin/add" class="text-warning">add one yourself!</a>
-            </p>
-          </div>
-        {% endif %}
-      </div>
+        </div>
+      </section>
     </div>
 
-    <footer class="py-4 mt-5 custom-footer">
-      <div class="container text-center">
-        <div class="mb-3 opacity-50">⚡</div>
+    <footer class="footer-modern pt-5 pb-4 mt-5">
+      <div class="container">
+        <div class="row g-4 mb-5">
+          <div class="col-lg-4 col-md-12">
+            <div class="brand-text mb-3">
+              ELITE<span class="text-white">DROPS</span>
+            </div>
+            <p class="text-secondary small pe-lg-5" style="line-height: 1.6">The definitive source for high-performance deals. We leverage real-time tracking to capture critical price crashes across the digital landscape.</p>
+            <div class="d-flex gap-3 mt-4">
+              <a href="#" class="social-icon text-decoration-none"><i class="fa-brands fa-x-twitter"></i></a>
+              <a href="#" class="social-icon text-decoration-none text-danger"><i class="fa-brands fa-instagram"></i></a>
+              <a href="#" class="social-icon text-decoration-none text-primary"><i class="fa-brands fa-discord"></i></a>
+            </div>
+          </div>
 
-        <p class="footer-text mb-2">
-          &copy; 2026
-          <span class="fw-bold">FlashSale <span class="text-warning">Pro</span></span>. All rights reserved.
-        </p>
+          <div class="col-6 col-lg-2 col-md-3">
+    <h6 class="text-white small fw-bold text-uppercase mb-4">Inventory</h6>
+    <ul class="list-unstyled footer-links">
+        <li class="mb-2">
+            <a href="/">Latest Drops</a>
+        </li>
+        <li class="mb-2">
+            <a href="/?category=Smartphones">Technology</a>
+        </li>
+        <li class="mb-2">
+            <a href="/?category=Laptops">Elite Setups</a>
+        </li>
+        <li class="mb-2">
+            <a href="/?search=90" class="text-warning">Flash Archive</a>
+        </li>
+    </ul>
+</div>
 
-        <div class="footer-links">
-          <a href="#" class="text-secondary small text-decoration-none mx-2">Terms</a>
-          <a href="#" class="text-secondary small text-decoration-none mx-2">Privacy</a>
-          <a href="#top" class="text-warning small text-decoration-none mx-2 fw-bold">↑ Back to Top</a>
+          <div class="col-6 col-lg-2 col-md-3">
+            <h6 class="text-white small fw-bold text-uppercase mb-4">Intelligence</h6>
+            <ul class="list-unstyled footer-links">
+              <li>
+                <a href="{{ url_for('info_page', page_type='about') }}">About Us</a>
+              </li>
+              <li>
+                <a href="{{ url_for('info_page', page_type='privacy') }}">Privacy Policy</a>
+              </li>
+              <li>
+                <a href="{{ url_for('info_page', page_type='terms') }}">Terms of Service</a>
+              </li>
+              <li class="mb-2">
+                <a href="https://wa.me/+916369601409?text=Hi%20Elite%20Drops%20Support,%20I%20have%20a%20question%20about..." 
+                 target="_blank" 
+                 class="text-info">
+                 <i class="fa-brands fa-whatsapp me-2"></i>Concierge Support
+                </a>
+              </li>
+            </ul>
+          </div>
+
+         <div class="col-12 col-lg-4">
+    <h6 class="text-white small fw-bold text-uppercase mb-4">Join the Inner Circle</h6>
+    <p class="text-secondary small mb-4">Get first-access "Flash Drops" sent to your inbox before they go public.</p>
+    
+    <form action="{{ url_for('subscribe_alert') }}" method="POST" class="d-flex gap-2">
+        <input type="email" name="email" class="form-control bg-black border-secondary text-white shadow-none" 
+               placeholder="Enter your email..." required style="border-radius: 8px;">
+        
+        <input type="hidden" name="deal_id" value="0"> 
+        <input type="hidden" name="target_price" value="0.00">
+
+        <button type="submit" class="btn btn-cyan px-4 fw-bold" style="border-radius: 8px; background: var(--neon-cyan); color: #000; border: none;">
+            JOIN
+        </button>
+    </form>
+</div>
+
+        <hr class="border-secondary opacity-10" />
+        <div class="row align-items-center pt-3">
+          <div class="col-md-6">
+            <div class="text-secondary font-monospace x-small">
+              © 2026 ELITE DROPS TERMINAL. ALL RIGHTS RESERVED.
+              <span class="ms-2 d-none d-md-inline opacity-25">|</span>
+              <span class="ms-2 d-none d-md-inline">V2.4.0_STABLE</span>
+            </div>
+          </div>
+          <div class="col-md-6 text-md-end">
+            <div class="text-secondary x-small">
+              <i class="fa-solid fa-shield-halved text-success me-1"></i> SECURE ENCRYPTED CONNECTION
+            </div>
+          </div>
         </div>
-
-        <p class="text-black small mt-3">Prices and availability are subject to change.</p>
       </div>
+      <p class="x-small text-secondary opacity-50 mt-2" style="font-size: 0.6rem;">
+    *Elite Drops may earn a commission on purchases made via our links at no extra cost to you.
+</p>
     </footer>
 
-    <script src="{{ url_for('static', filename='js/timer.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      window.addEventListener('scroll', function () {
+        const nav = document.querySelector('.custom-nav')
+        if (window.scrollY > 50) {
+          nav.classList.add('scrolled')
+        } else {
+          nav.classList.remove('scrolled')
+        }
+      })
+      
+      // NEW: Wishlist Logic
+      function toggleWishlist(btn, id, name, price, img) {
+        let wishlist = JSON.parse(localStorage.getItem('elite_wishlist')) || []
+        const index = wishlist.findIndex((item) => item.id === id)
+      
+        if (index === -1) {
+          wishlist.push({ id, name, price, img })
+          btn.querySelector('i').classList.replace('fa-regular', 'fa-solid')
+          btn.classList.add('wishlist-active')
+        } else {
+          wishlist.splice(index, 1)
+          btn.querySelector('i').classList.replace('fa-solid', 'fa-regular')
+          btn.classList.remove('wishlist-active')
+        }
+      
+        localStorage.setItem('elite_wishlist', JSON.stringify(wishlist))
+        updateWishlistCount()
+      }
+      
+      function updateWishlistCount() {
+        const wishlist = JSON.parse(localStorage.getItem('elite_wishlist')) || []
+        const countBadge = document.getElementById('wishlist-count')
+        if (countBadge) countBadge.innerText = wishlist.length
+      }
+      
+      // Initialize Wishlist Icons on Load
+      document.addEventListener('DOMContentLoaded', () => {
+        let wishlist = JSON.parse(localStorage.getItem('elite_wishlist')) || []
+        document.querySelectorAll('.wishlist-btn').forEach((btn) => {
+          const id = btn.getAttribute('data-id')
+          if (wishlist.some((item) => item.id === id)) {
+            btn.querySelector('i').classList.replace('fa-regular', 'fa-solid')
+            btn.classList.add('wishlist-active')
+          }
+        })
+        updateWishlistCount()
+      })
+    </script>
+    <a href="https://wa.me/1234567890?text=Hi%20Elite%20Drops%20Support!" class="whatsapp-float" target="_blank">
+    <i class="fa-brands fa-whatsapp"></i>
+    </a>
   </body>
 </html>
