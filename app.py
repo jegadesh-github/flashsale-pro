@@ -73,6 +73,8 @@ INFO_PAGES = {
 }
 
 # --- SYNC LOGIC ---
+# --- SYNC LOGIC UPDATE ---
+# --- SYNC LOGIC UPDATE ---
 def perform_sync_logic():
     db = None
     try:
@@ -81,17 +83,14 @@ def perform_sync_logic():
         cursor = db.cursor(dictionary=True)
         now = datetime.now()
 
-        # STEP 1: INCOME SETUP (Using your Real ID)
-        # Defaults to your ID if the environment variable isn't found
         AFFILIATE_TAG = os.getenv('AFFILIATE_ID', 'elitedrops26-21')
 
-        # STEP 1.1: PURGE EXPIRED
+        # Clean up expired deals
         cursor.execute("DELETE FROM clicks WHERE deal_id IN (SELECT id FROM deals WHERE expiry_time <= %s)", (now,))
         cursor.execute("DELETE FROM deals WHERE expiry_time <= %s", (now,))
         
         sync_batch_id = f"sync_{int(time.time())}"
         
-        # We still use DummyJSON for product DATA, but we turn them into AMAZON links for MONEY
         url = "https://dummyjson.com/products?limit=50"
         response = requests.get(url, timeout=15)
         
@@ -109,34 +108,34 @@ def perform_sync_logic():
                 name = item['title']
                 sale_price = float(item['price'])
                 discount_pct = float(item.get('discountPercentage', 10))
-                # Calculate original price for a "Sale" look
                 original_price = round(sale_price / (1 - (discount_pct / 100)), 2)
                 expiry = now + timedelta(hours=48)
                 category = category_raw.replace('-', ' ').title() 
                 
-                # --- NEW INCOME LOGIC: TRANSFORM TO AMAZON LINKS ---
-                # We simulate an Amazon URL using the product name/id
-                # In the future, this is where your Amazon API data will go
+                # Logic: If discount is > 15%, mark as trending automatically
+                is_trending = 1 if discount_pct > 15 else 0
+                
                 product_query = name.replace(" ", "+")
                 affiliate_url = f"https://www.amazon.in/s?k={product_query}&tag={AFFILIATE_TAG}"
-                
                 image_url = item['images'][0] if item.get('images') else ""
 
+                # Added is_trending to the INSERT and UPDATE
                 sql = """
                     INSERT INTO deals 
                     (product_name, original_price, sale_price, discount_percentage, 
-                     category, affiliate_url, image_url, expiry_time, is_active, store_name, batch_id)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, TRUE, 'Amazon India', %s)
+                     category, affiliate_url, image_url, expiry_time, is_active, store_name, batch_id, is_trending)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, TRUE, 'Amazon India', %s, %s)
                     ON DUPLICATE KEY UPDATE 
                         sale_price = VALUES(sale_price),
                         discount_percentage = VALUES(discount_percentage),
                         affiliate_url = VALUES(affiliate_url),
                         expiry_time = VALUES(expiry_time),
                         batch_id = VALUES(batch_id),
+                        is_trending = VALUES(is_trending),
                         is_active = TRUE
                 """
                 cursor.execute(sql, (name, original_price, sale_price, int(discount_pct), 
-                                     category, affiliate_url, image_url, expiry, sync_batch_id))
+                                     category, affiliate_url, image_url, expiry, sync_batch_id, is_trending))
                 new_deals_count += 1
 
         db.commit()
@@ -147,15 +146,14 @@ def perform_sync_logic():
     finally:
         if db: db.close()
 
-# --- MAIN PUBLIC ROUTES ---
-
+# --- INDEX ROUTE UPDATE ---
 @app.route('/')
 def index():
     search_query = request.args.get('search', '').strip()
     category_filter = request.args.get('category', '').strip()
     db = None
     
-    hero_deals = []; trending_deals = []; flash_deals = []; daily_drops = []; categories = []
+    hero_deals = []; trending_deals = []; daily_drops = []; categories = []
     current_time = datetime.now()
     
     try:
@@ -166,40 +164,33 @@ def index():
         cursor.execute("SELECT DISTINCT category FROM deals WHERE is_active = TRUE")
         categories = [row['category'] for row in cursor.fetchall()]
 
-        query = """
-            SELECT d.*, 
-            (SELECT COUNT(*) FROM clicks c WHERE c.deal_id = d.id AND c.clicked_at > NOW() - INTERVAL 1 DAY) as recent_clicks,
-            (SELECT COUNT(*) FROM clicks c WHERE c.deal_id = d.id AND c.clicked_at > NOW() - INTERVAL 3 HOUR) as hourly_velocity
-            FROM deals d 
-            WHERE d.is_active = TRUE AND d.expiry_time > %s
-        """
+        # Base query
+        query = "SELECT * FROM deals WHERE is_active = TRUE AND expiry_time > %s"
         params = [current_time]
         
         if search_query:
-            query += " AND (d.product_name LIKE %s OR d.category LIKE %s)"
+            query += " AND (product_name LIKE %s OR category LIKE %s)"
             params.extend([f"%{search_query}%", f"%{search_query}%"])
         if category_filter:
-            query += " AND d.category = %s"
+            query += " AND category = %s"
             params.append(category_filter)
         
-        query += " ORDER BY d.rating DESC, d.discount_percentage DESC"
+        query += " ORDER BY created_at DESC"
         cursor.execute(query, tuple(params))
         all_results = cursor.fetchall()
 
         for deal in all_results:
-            deal['is_trending'] = (deal.get('recent_clicks') or 0) > 2
-            deal['is_hot'] = (deal.get('hourly_velocity') or 0) >= 5 
-            deal['live_views'] = (deal.get('base_views', 15) or 15) + random.randint(0, 5)
-            
-            time_left = deal['expiry_time'] - current_time
+            # Add helper flags for the UI
+            deal['is_hot'] = deal['discount_percentage'] > 20
             daily_drops.append(deal)
 
-            if len(hero_deals) < 6 and deal.get('rating', 0) >= 4.0:
-                hero_deals.append(deal)
-            elif len(trending_deals) < 4 and (deal['is_trending'] or deal['is_hot']):
+            # Assign to sections based on the database column
+            if deal.get('is_trending'):
                 trending_deals.append(deal)
-            elif len(flash_deals) < 4 and time_left < timedelta(hours=24):
-                flash_deals.append(deal)
+            
+            # Use rating or high discount for "Elite Choices" (Hero)
+            if len(hero_deals) < 6 and deal['discount_percentage'] > 15:
+                hero_deals.append(deal)
             
     except Exception as e:
         print(f"HOME ERROR: {str(e)}")
@@ -207,10 +198,13 @@ def index():
         if db: db.close()
 
     return render_template('index.html', 
-                            hero_deals=hero_deals, trending_deals=trending_deals, 
-                            flash_deals=flash_deals, deals=daily_drops, 
-                            categories=categories, search_query=search_query, 
-                            current_category=category_filter, now=current_time)
+                            hero_deals=hero_deals, 
+                            trending_deals=trending_deals, 
+                            deals=daily_drops, 
+                            categories=categories, 
+                            search_query=search_query, 
+                            current_category=category_filter, 
+                            now=current_time)
 
 @app.route('/info/<page_type>')
 def info_page(page_type):

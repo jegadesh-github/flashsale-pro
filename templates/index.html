@@ -169,55 +169,66 @@
           </div>
         </section>
       {% endif %} {% if trending_deals %}
-        <section class="mb-5 trending-vertical-wrapper">
-          <h5 class="text-uppercase section-title mb-4"><i class="fa-solid fa-fire text-cyan me-2"></i>Trending Now</h5>
+<section class="mb-5 trending-vertical-wrapper">
+  <h5 class="text-uppercase section-title mb-4">
+    <i class="fa-solid fa-fire text-cyan me-2"></i>Trending Now
+  </h5>
 
-          <div class="trending-viewport">
-            <div class="trending-vertical-track">
-              {% for deal in trending_deals %}
-                <div class="trending-card-container">
-                  <div class="deal-card-compact trending-mid-card">
-                    <div class="card-actions-stack">
-                      <button class="action-btn wishlist-btn" data-id="{{ deal.id }}" onclick="toggleWishlist(this, '{{ deal.id }}', '{{ deal.product_name }}', '{{ deal.sale_price }}', '{{ deal.image_url }}')"><i class="fa-regular fa-heart"></i></button>
-                      <a href="https://wa.me/?text=Check this deal: {{ deal.product_name }}" class="action-btn whatsapp-btn"><i class="fa-brands fa-whatsapp"></i></a>
-                    </div>
+  <div class="trending-viewport">
+    <div class="trending-vertical-track">
+      {% for deal in trending_deals %}
+        <div class="trending-card-container">
+          <div class="deal-card-compact trending-mid-card">
+            <div class="card-actions-stack">
+              <button class="action-btn wishlist-btn" data-id="{{ deal.id }}" 
+                      onclick="toggleWishlist(this, '{{ deal.id }}', '{{ deal.product_name }}', '{{ deal.sale_price }}', '{{ deal.image_url }}')">
+                <i class="fa-regular fa-heart"></i>
+              </button>
+              <a href="https://wa.me/?text=Check this deal: {{ deal.product_name }} at {{ request.url_root }}go/{{ deal.id }}" 
+                 class="action-btn whatsapp-btn" target="_blank">
+                <i class="fa-brands fa-whatsapp"></i>
+              </a>
+            </div>
 
-                    <div class="card-tags">
-                      <span class="badge-hot"><i class="fa-solid fa-fire"></i> HOT</span>
-                      <span class="category-tag">{{ deal.category|default('Tech') }}</span>
-                    </div>
+            <div class="card-tags">
+              <span class="badge-hot"><i class="fa-solid fa-fire"></i> HOT</span>
+              <span class="category-tag">{{ deal.category|default('Tech') }}</span>
+            </div>
 
-                    <div class="card-img-container-mid">
-                      <img src="{{ deal.image_url }}" alt="{{ deal.product_name }}" />
-                      <div class="discount-pill">-{{ (100 - deal.sale_price / deal.original_price * 100)|round|int }}%</div>
-                    </div>
+            <div class="card-img-container-mid">
+              <img src="{{ deal.image_url }}" alt="{{ deal.product_name }}" />
+              {% if deal.original_price and deal.original_price > deal.sale_price %}
+                <div class="discount-pill">-{{ (100 - (deal.sale_price / deal.original_price * 100))|round|int }}%</div>
+              {% endif %}
+            </div>
 
-                    <div class="px-2 mt-2">
-                      <h6 class="card-title-mid text-white">{{ deal.product_name }}</h6>
+            <div class="px-2 mt-2">
+              <h6 class="card-title-mid text-white">{{ deal.product_name }}</h6>
 
-                      <div class="d-flex align-items-center gap-2 mb-2">
-                        <span class="price-deal text-cyan">${{ deal.sale_price | currency }}</span>
-                        <span class="price-orig text-secondary text-decoration-line-through">${{ deal.original_price | currency }}</span>
-                      </div>
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="price-deal text-cyan">₹{{ "{:,.2f}".format(deal.sale_price) }}</span>
+                {% if deal.original_price > deal.sale_price %}
+                  <span class="price-orig text-secondary text-decoration-line-through">₹{{ "{:,.2f}".format(deal.original_price) }}</span>
+                {% endif %}
+              </div>
 
-                      <div class="d-flex justify-content-between align-items-center">
-                        <div class="timer-box">
-                          <i class="fa-regular fa-clock me-1"></i>
-                          <span class="timer-text">04:12:05</span>
-                        </div>
-                        <a href="/go/{{ deal.id }}" class="btn-go-link">
-                          VIEW
-                          <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="timer-box">
+                  <i class="fa-regular fa-clock me-1"></i>
+                  <span class="timer-text">04:12:05</span>
                 </div>
-              {% endfor %}
+                <a href="/go/{{ deal.id }}" class="btn-go-link">
+                  VIEW <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i>
+                </a>
+              </div>
             </div>
           </div>
-        </section>
-      {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
 
       <section class="mb-5">
         <div class="d-flex justify-content-between align-items-end mb-4">
