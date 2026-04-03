@@ -81,14 +81,17 @@ def perform_sync_logic():
         cursor = db.cursor(dictionary=True)
         now = datetime.now()
 
-        # STEP 1: INCOME SETUP
-        AFFILIATE_TAG = os.getenv('AFFILIATE_ID', 'elite-21')
+        # STEP 1: INCOME SETUP (Using your Real ID)
+        # Defaults to your ID if the environment variable isn't found
+        AFFILIATE_TAG = os.getenv('AFFILIATE_ID', 'elitedrops26-21')
 
         # STEP 1.1: PURGE EXPIRED
         cursor.execute("DELETE FROM clicks WHERE deal_id IN (SELECT id FROM deals WHERE expiry_time <= %s)", (now,))
         cursor.execute("DELETE FROM deals WHERE expiry_time <= %s", (now,))
         
         sync_batch_id = f"sync_{int(time.time())}"
+        
+        # We still use DummyJSON for product DATA, but we turn them into AMAZON links for MONEY
         url = "https://dummyjson.com/products?limit=50"
         response = requests.get(url, timeout=15)
         
@@ -106,22 +109,28 @@ def perform_sync_logic():
                 name = item['title']
                 sale_price = float(item['price'])
                 discount_pct = float(item.get('discountPercentage', 10))
+                # Calculate original price for a "Sale" look
                 original_price = round(sale_price / (1 - (discount_pct / 100)), 2)
                 expiry = now + timedelta(hours=48)
                 category = category_raw.replace('-', ' ').title() 
                 
-                raw_url = f"https://dummyjson.com/products/{item['id']}"
-                affiliate_url = f"{raw_url}?afftag={AFFILIATE_TAG}"
+                # --- NEW INCOME LOGIC: TRANSFORM TO AMAZON LINKS ---
+                # We simulate an Amazon URL using the product name/id
+                # In the future, this is where your Amazon API data will go
+                product_query = name.replace(" ", "+")
+                affiliate_url = f"https://www.amazon.in/s?k={product_query}&tag={AFFILIATE_TAG}"
+                
                 image_url = item['images'][0] if item.get('images') else ""
 
                 sql = """
                     INSERT INTO deals 
                     (product_name, original_price, sale_price, discount_percentage, 
                      category, affiliate_url, image_url, expiry_time, is_active, store_name, batch_id)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, TRUE, 'Elite_Provider', %s)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, TRUE, 'Amazon India', %s)
                     ON DUPLICATE KEY UPDATE 
                         sale_price = VALUES(sale_price),
                         discount_percentage = VALUES(discount_percentage),
+                        affiliate_url = VALUES(affiliate_url),
                         expiry_time = VALUES(expiry_time),
                         batch_id = VALUES(batch_id),
                         is_active = TRUE
