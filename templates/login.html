@@ -1,19 +1,113 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Login</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>Command Access | DropDeals</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root { --neon-cyan:#00f2ff; --neon-gold:#f9ba00; --bg:#020203; --glass:rgba(255,255,255,0.04); --border:rgba(255,255,255,0.10); }
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{min-height:100vh;background:var(--bg);background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(0,242,255,0.12),transparent),radial-gradient(ellipse 60% 40% at 100% 80%,rgba(249,186,0,0.06),transparent);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;padding:20px;overflow:hidden}
+        body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,242,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,242,255,0.03) 1px,transparent 1px);background-size:50px 50px;animation:gridMove 20s linear infinite;pointer-events:none}
+        @keyframes gridMove{0%{transform:translateY(0)}100%{transform:translateY(50px)}}
+        .blob{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+        .blob-1{width:300px;height:300px;background:rgba(0,242,255,0.08);top:-100px;left:-100px;animation:blobFloat 8s ease-in-out infinite}
+        .blob-2{width:250px;height:250px;background:rgba(249,186,0,0.06);bottom:-80px;right:-80px;animation:blobFloat 10s ease-in-out infinite reverse}
+        @keyframes blobFloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(20px,20px) scale(1.05)}}
+        .login-wrapper{width:100%;max-width:440px;position:relative;z-index:10}
+        .brand-wrap{text-align:center;margin-bottom:32px}
+        .brand-logo{font-size:2rem;font-weight:900;letter-spacing:2px;background:linear-gradient(135deg,#ffffff 0%,var(--neon-cyan) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .brand-sub{font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:rgba(255,255,255,0.3);letter-spacing:3px;margin-top:4px;text-transform:uppercase}
+        .status-indicator{display:inline-flex;align-items:center;gap:6px;background:rgba(0,242,255,0.08);border:1px solid rgba(0,242,255,0.2);border-radius:20px;padding:4px 14px;margin-top:12px;font-size:0.65rem;color:var(--neon-cyan);font-family:'JetBrains Mono',monospace}
+        .pulse-dot{width:6px;height:6px;background:var(--neon-cyan);border-radius:50%;animation:pulseDot 1.5s ease-in-out infinite;box-shadow:0 0 6px var(--neon-cyan)}
+        @keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.8)}}
+        .login-card{background:var(--glass);border:1px solid var(--border);border-radius:24px;padding:36px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 0 0 1px rgba(255,255,255,0.03) inset,0 30px 60px rgba(0,0,0,0.5),0 0 40px rgba(0,242,255,0.04)}
+        .card-title{font-size:1.1rem;font-weight:700;color:#ffffff;margin-bottom:6px}
+        .card-desc{font-size:0.75rem;color:rgba(255,255,255,0.35);margin-bottom:28px}
+        .flash-alert{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);border-radius:12px;padding:12px 16px;color:#ef4444;font-size:0.8rem;display:flex;align-items:center;gap:8px;margin-bottom:20px}
+        .input-group-elite{position:relative;margin-bottom:16px}
+        .input-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.25);font-size:0.85rem;pointer-events:none;z-index:2;transition:color 0.3s}
+        .elite-input{width:100%;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px 14px 44px;color:white;font-family:'Outfit',sans-serif;font-size:0.9rem;outline:none;transition:all 0.3s ease}
+        .elite-input::placeholder{color:rgba(255,255,255,0.2)}
+        .elite-input:focus{border-color:var(--neon-cyan);box-shadow:0 0 0 3px rgba(0,242,255,0.1);background:rgba(0,242,255,0.04)}
+        .input-group-elite:focus-within .input-icon{color:var(--neon-cyan)}
+        .pwd-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.25);cursor:pointer;padding:4px;transition:color 0.3s;z-index:2}
+        .pwd-toggle:hover{color:var(--neon-cyan)}
+        .elite-input[type="password"]{padding-right:44px}
+        .btn-access{width:100%;background:linear-gradient(135deg,var(--neon-cyan) 0%,#00a8b5 100%);color:#000;border:none;border-radius:12px;padding:15px;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.9rem;letter-spacing:1.5px;cursor:pointer;transition:all 0.3s ease;margin-top:8px;position:relative;overflow:hidden}
+        .btn-access:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,242,255,0.4)}
+        .btn-access:active{transform:translateY(0)}
+        .divider{display:flex;align-items:center;gap:12px;margin:20px 0}
+        .divider hr{flex:1;border-color:rgba(255,255,255,0.06)}
+        .divider span{font-size:0.65rem;color:rgba(255,255,255,0.2);white-space:nowrap;font-family:'JetBrains Mono',monospace}
+        .back-link{display:flex;align-items:center;justify-content:center;gap:8px;color:rgba(255,255,255,0.35);text-decoration:none;font-size:0.8rem;transition:color 0.3s}
+        .back-link:hover{color:var(--neon-cyan)}
+        .security-note{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:24px;font-size:0.65rem;color:rgba(255,255,255,0.2);font-family:'JetBrains Mono',monospace}
+        .security-note i{color:rgba(16,185,129,0.6)}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .btn-access.loading i{animation:spin 1s linear infinite}
+    </style>
 </head>
-<body class="bg-dark text-white d-flex align-items-center" style="height: 100vh;">
-    <div class="container text-center" style="max-width: 400px;">
-        <h2 class="mb-4">⚡ FlashSale Admin</h2>
-        <div class="card bg-secondary p-4">
-            <form method="POST">
-                <input type="text" name="username" class="form-control mb-3" placeholder="Username" required>
-                <input type="password" name="password" class="form-control mb-3" placeholder="Password" required>
-                <button type="submit" class="btn btn-warning w-100">Login</button>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="login-wrapper">
+        <div class="brand-wrap">
+            <div class="brand-logo">DROP<span style="opacity:0.6">DEALS</span></div>
+            <div class="brand-sub">Command Terminal</div>
+            <div class="status-indicator">
+                <div class="pulse-dot"></div>
+                SYSTEM ONLINE
+            </div>
+        </div>
+        <div class="login-card">
+            <div class="card-title">Restricted Access</div>
+            <div class="card-desc">Authenticate to access the control panel</div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}{% for category, message in messages %}
+                <div class="flash-alert"><i class="fa-solid fa-triangle-exclamation"></i>{{ message }}</div>
+                {% endfor %}{% endif %}
+            {% endwith %}
+            <form method="POST" id="loginForm">
+                <div class="input-group-elite">
+                    <i class="fa-solid fa-user input-icon"></i>
+                    <input type="text" name="username" class="elite-input" placeholder="Username" required autocomplete="username"/>
+                </div>
+                <div class="input-group-elite">
+                    <i class="fa-solid fa-lock input-icon"></i>
+                    <input type="password" name="password" id="pwdField" class="elite-input" placeholder="Password" required autocomplete="current-password"/>
+                    <button type="button" class="pwd-toggle" onclick="togglePwd()">
+                        <i class="fa-solid fa-eye" id="pwdIcon"></i>
+                    </button>
+                </div>
+                <button type="submit" class="btn-access" id="loginBtn">
+                    <i class="fa-solid fa-bolt me-2"></i>ACCESS COMMAND CENTER
+                </button>
             </form>
+            <div class="divider"><hr/><span>OR</span><hr/></div>
+            <a href="{{ url_for('index') }}" class="back-link">
+                <i class="fa-solid fa-arrow-left fa-xs"></i>Return to Elite Drops
+            </a>
+        </div>
+        <div class="security-note">
+            <i class="fa-solid fa-shield-halved"></i>
+            ENCRYPTED SESSION &nbsp;•&nbsp; ADMIN ONLY
         </div>
     </div>
+    <script>
+        function togglePwd(){
+            const f=document.getElementById('pwdField'),i=document.getElementById('pwdIcon');
+            if(f.type==='password'){f.type='text';i.className='fa-solid fa-eye-slash';}
+            else{f.type='password';i.className='fa-solid fa-eye';}
+        }
+        document.getElementById('loginForm').addEventListener('submit',function(){
+            const btn=document.getElementById('loginBtn');
+            btn.classList.add('loading');
+            btn.innerHTML='<i class="fa-solid fa-spinner me-2"></i>AUTHENTICATING...';
+        });
+    </script>
 </body>
 </html>

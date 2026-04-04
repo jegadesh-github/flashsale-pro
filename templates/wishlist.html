@@ -1,89 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Your Wishlist | Elite Drops</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Wishlist | DropDeals</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body class="bg-dark text-white">
-
-    <nav class="navbar navbar-dark custom-nav scrolled">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <div class="brand-text">ELITE<span class="text-cyan">DROPS</span></div>
-            </a>
-            <a href="/" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-arrow-left me-2"></i>Back to Drops</a>
-        </div>
-    </nav>
-
-    <div class="container mt-5">
-        <div class="row mb-4">
-            <div class="col-12">
-                <h2 class="display-6"><i class="fa-solid fa-heart text-danger me-3"></i>Saved <span class="text-cyan">Inventory</span></h2>
-                <p class="text-secondary">Your personal selection of high-performance deals.</p>
-            </div>
-        </div>
-
-        <div id="wishlist-grid" class="product-grid">
-            </div>
-
-        <div id="empty-wishlist" class="text-center py-5 d-none">
-            <i class="fa-solid fa-box-open fa-3x mb-3 opacity-25"></i>
-            <h4 class="text-secondary">Your wishlist is empty</h4>
-            <a href="/" class="btn btn-warning mt-3 fw-bold px-4">EXPLORE DEALS</a>
-        </div>
-    </div>
-
-    <script>
-        function renderWishlist() {
-            const wishlist = JSON.parse(localStorage.getItem('elite_wishlist')) || [];
-            const grid = document.getElementById('wishlist-grid');
-            const emptyState = document.getElementById('empty-wishlist');
-
-            if (wishlist.length === 0) {
-                grid.innerHTML = '';
-                emptyState.classList.remove('d-none');
-                return;
-            }
-
-            emptyState.classList.add('d-none');
-            grid.innerHTML = wishlist.map(item => `
-                <div class="mini-card layer-standard" id="wish-item-${item.id}">
-                    <div class="card-actions-stack">
-                        <button class="action-btn text-danger" onclick="removeFromWishlist('${item.id}')">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-
-                    <a href="/go/${item.id}" class="img-mini-wrap">
-                        <img src="${item.img}" alt="${item.name}">
+<body class="site-body">
+    <header class="site-header">
+        <div class="container-fluid shell-width">
+            <div class="top-nav">
+                <a href="/" class="brand-mark">
+                    <span class="brand-badge"><i class="fa-solid fa-bolt"></i></span>
+                    <span class="brand-copy">DROP<strong>DEALS</strong></span>
+                </a>
+                <div class="nav-actions">
+                    <a href="/" class="btn btn-outline-dark rounded-pill px-4">Back to deals</a>
+                    <a href="/wishlist" class="wishlist-link">
+                        <i class="fa-solid fa-heart"></i>
+                        <span>Wishlist</span>
+                        <b id="wishlist-count">0</b>
                     </a>
+                </div>
+            </div>
+        </div>
+    </header>
 
-                    <div class="card-content-wrap mt-2">
-                        <a href="/go/${item.id}" class="card-label m-0 d-block text-truncate">${item.name}</a>
-                        <div class="price-stack mt-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="sale-price text-cyan">$${item.price}</span>
-                                <a href="/go/${item.id}" class="btn-go-link">GET IT</a>
-                            </div>
-                        </div>
+    <main class="py-4">
+        <div class="container-fluid shell-width">
+            <section class="wishlist-shell">
+                <div class="wishlist-hero">
+                    <div>
+                        <p class="eyebrow">Saved for later</p>
+                        <h1 class="wishlist-title">Your wishlist</h1>
+                        <p class="wishlist-subtitle">Keep your favorite finds in one place and jump back in when the timing feels right.</p>
+                    </div>
+                    <div class="wishlist-footer">
+                        <button id="clear-wishlist" class="btn btn-outline-dark rounded-pill px-4">Clear wishlist</button>
+                        <a href="/" class="btn btn-accent rounded-pill px-4">Continue shopping</a>
                     </div>
                 </div>
-            `).join('');
-        }
 
-        function removeFromWishlist(id) {
-            let wishlist = JSON.parse(localStorage.getItem('elite_wishlist')) || [];
-            wishlist = wishlist.filter(item => item.id !== id);
-            localStorage.setItem('elite_wishlist', JSON.stringify(wishlist));
-            renderWishlist(); // Refresh the grid
-        }
+                <div class="wishlist-layout">
+                    <aside class="wishlist-summary">
+                        <div class="sidebar-card">
+                            <p class="eyebrow">Overview</p>
+                            <div class="wishlist-stat-grid">
+                                <div class="wishlist-stat">
+                                    <strong id="wishlist-total">0</strong>
+                                    <span>Saved deals</span>
+                                </div>
+                                <div class="wishlist-stat">
+                                    <strong id="wishlist-savings">₹0</strong>
+                                    <span>Combined savings</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sidebar-card">
+                            <p class="eyebrow">Tip</p>
+                            <p class="mb-0">Save the deals you like now so you can compare prices, categories and timing later without searching again.</p>
+                        </div>
+                    </aside>
 
-        // Initial Load
-        document.addEventListener('DOMContentLoaded', renderWishlist);
-    </script>
+                    <section>
+                        <div id="wishlist-grid" class="wishlist-grid"></div>
+                        <div id="wishlist-empty" class="wishlist-empty d-none">
+                            <i class="fa-regular fa-heart"></i>
+                            <h2>Nothing saved yet</h2>
+                            <p>Tap the heart on any deal card to keep it here.</p>
+                            <a href="/" class="btn btn-accent rounded-pill px-4">Explore deals</a>
+                        </div>
+                    </section>
+                </div>
+            </section>
+
+            <section class="wishlist-suggestions">
+                <div class="section-head">
+                    <div>
+                        <p class="eyebrow">You might also like</p>
+                        <h2>More deals to explore</h2>
+                    </div>
+                </div>
+                <div class="wishlist-suggestion-grid">
+                    {% for deal in suggestions %}
+                    <article class="wishlist-suggestion-card">
+                        <img src="{{ deal.image_url }}" alt="{{ deal.product_name }}">
+                        <h3>{{ deal.product_name }}</h3>
+                        <p>{{ deal.category }} | {{ deal.store_name }}</p>
+                        <div class="price-row">
+                            <strong>{{ deal.sale_price | currency }}</strong>
+                            <span>{{ deal.original_price | currency }}</span>
+                        </div>
+                        <div class="deal-actions mt-3">
+                            <a href="{{ deal.outbound_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-dark rounded-pill">View deal</a>
+                            <button class="icon-action wishlist-toggle" data-id="{{ deal.id }}" data-name="{{ deal.product_name }}" data-price="{{ deal.sale_price }}" data-original-price="{{ deal.original_price }}" data-category="{{ deal.category }}" data-image="{{ deal.image_url }}" data-url="{{ deal.outbound_url }}" data-store="{{ deal.store_name }}">
+                                <i class="fa-regular fa-heart"></i>
+                            </button>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/site.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/wishlist.js') }}"></script>
 </body>
 </html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<body style="margin:0;padding:0;background:#f3f6fb;font-family:Arial,sans-serif;color:#172033;">
+    <div style="max-width:640px;margin:0 auto;padding:32px 20px;">
+        <div style="background:#ffffff;border-radius:20px;padding:32px;border:1px solid #dde5f0;">
+            <p style="margin:0 0 12px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#ff6b35;font-weight:700;">New Deal Alert</p>
+            <h1 style="margin:0 0 16px;font-size:28px;line-height:1.1;">{{ row['product_name'] }}</h1>
+            <p style="margin:0 0 18px;font-size:16px;line-height:1.6;">A matching deal is live now on {{ brand }}.</p>
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:20px;margin-bottom:20px;">
+                <p style="margin:0 0 8px;font-size:14px;color:#61718a;">Current price</p>
+                <p style="margin:0 0 8px;font-size:30px;font-weight:700;color:#0d1b2a;">{{ row['sale_price'] | currency }}</p>
+                <p style="margin:0;font-size:14px;color:#61718a;">Original price: {{ row['original_price'] | currency }}</p>
+            </div>
+            <a href="{{ row['affiliate_url'] }}" style="display:inline-block;background:#ff6b35;color:#ffffff;text-decoration:none;padding:14px 22px;border-radius:999px;font-weight:700;">Open Deal</a>
+            <hr style="margin:28px 0;border:none;border-top:1px solid #e8edf5;">
+            <p style="margin:0;font-size:13px;line-height:1.6;color:#61718a;">Need fewer emails? <a href="{{ unsubscribe_url }}" style="color:#ff6b35;">Unsubscribe here</a>.</p>
+        </div>
+    </div>
+</body>
+</html>

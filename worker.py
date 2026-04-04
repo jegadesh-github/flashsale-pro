@@ -1,28 +1,26 @@
-import requests
 import time
 import os
 from dotenv import load_dotenv
+from app import run_automation_cycle
 
 load_dotenv()
 
-# The URL of your local or live site
-SYNC_URL = "http://127.0.0.1:5000/cron/sync/"
-TOKEN = os.getenv('CRON_SECRET_TOKEN', 'your-secret-123')
+SLEEP_SECONDS = int(os.getenv('AUTOMATION_INTERVAL_SECONDS', 21600))
+PREFER_OFFLINE = os.getenv('AUTOMATION_PREFER_OFFLINE', 'false').lower() == 'true'
 
 def run_sync():
     try:
-        print(f"[{time.ctime()}] Starting Automated Sync...")
-        response = requests.get(SYNC_URL + TOKEN)
-        if response.status_code == 200:
-            print("Success: Deals Updated.")
+        print(f"[{time.ctime()}] Starting automated sync (offline={PREFER_OFFLINE})...")
+        result = run_automation_cycle('worker', prefer_offline=PREFER_OFFLINE)
+        if result['success']:
+            print(f"Success: {result['created_count']} deals processed; emails sent={result['emails_sent']}.")
         else:
-            print(f"Failed: {response.status_code}")
+            print(f"Failed: {result.get('error_message') or 'unknown error'}")
     except Exception as e:
         print(f"Error: {e}")
 
 if __name__ == "__main__":
     while True:
         run_sync()
-        # Wait for 6 hours (6 * 60 * 60 seconds)
-        print("Waiting 6 hours for next sync...")
-        time.sleep(21600)
+        print(f"Waiting {SLEEP_SECONDS} seconds for next automation cycle...")
+        time.sleep(SLEEP_SECONDS)

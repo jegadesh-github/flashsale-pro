@@ -3,42 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Page Lost in the Flash | FlashSale Pro</title>
+    <title>404 — Page Lost in the Flash | Elite Drops</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Grotesk:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
     <style>
-        :root { --glass: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
-        body { background: #0f0f0f; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; min-height: 100vh; display: flex; align-items: center; }
-        
-        /* 1. Radar Animation */
-        .radar-container { position: relative; width: 150px; height: 150px; margin: 0 auto 30px; }
-        .radar-circle { position: absolute; width: 100%; height: 100%; border: 2px solid #ffc107; border-radius: 50%; opacity: 0; animation: pulse 2s infinite; }
-        .radar-circle:nth-child(2) { animation-delay: 0.5s; }
-        .radar-circle:nth-child(3) { animation-delay: 1s; }
-        .radar-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem; color: #ffc107; text-shadow: 0 0 20px rgba(255, 193, 7, 0.5); }
-        @keyframes pulse { 0% { transform: scale(0.5); opacity: 0.8; } 100% { transform: scale(1.5); opacity: 0; } }
+        :root { --neon-cyan: #00f2ff; --neon-gold: #f9ba00; --neon-red: #ff3e3e; }
+        body {
+            background: #020203;
+            background-image: radial-gradient(circle at 60% 0%, #0d1b2a 0%, transparent 55%);
+            color: white; font-family: 'Space Grotesk', sans-serif;
+            min-height: 100vh; display: flex; align-items: center; overflow-x: hidden;
+        }
+        h1,h2,h3 { font-family: 'Syne', sans-serif; font-weight: 800; }
 
-        /* Glassmorphism Card */
-        .error-card { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 24px; padding: 40px; text-align: center; max-width: 600px; width: 90%; margin: auto; }
-        
-        /* 3. Search Bar */
-        .search-404 { background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 50px; padding: 5px 20px; margin-top: 20px; }
-        .search-404 input { background: transparent; border: none; color: white; padding: 10px; width: 100%; outline: none; }
+        /* Radar animation */
+        .radar-container { position: relative; width: 130px; height: 130px; margin: 0 auto 24px; }
+        .radar-circle {
+            position: absolute; width: 100%; height: 100%;
+            border: 2px solid var(--neon-cyan); border-radius: 50%;
+            opacity: 0; animation: radar-pulse 2.5s infinite;
+        }
+        .radar-circle:nth-child(2) { animation-delay: 0.6s; }
+        .radar-circle:nth-child(3) { animation-delay: 1.2s; }
+        .radar-icon {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 2.5rem; color: var(--neon-cyan);
+            filter: drop-shadow(0 0 12px rgba(0,242,255,0.6));
+        }
+        @keyframes radar-pulse { 0%{transform:scale(0.4);opacity:0.9} 100%{transform:scale(1.6);opacity:0} }
 
-        /* 4. Suggestions Snippet */
-        .suggestion-chip { background: rgba(255,255,255,0.07); border-radius: 12px; padding: 10px; transition: 0.3s; text-decoration: none; display: flex; align-items: center; margin-bottom: 10px; border: 1px solid transparent; }
-        .suggestion-chip:hover { background: rgba(255,255,255,0.12); border-color: #ffc107; transform: translateY(-2px); }
-        .suggestion-img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; margin-right: 12px; }
+        /* Error card */
+        .error-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px; padding: 40px;
+            text-align: center; max-width: 620px; width: 92%; margin: auto;
+        }
 
-        /* 6. Redirect Progress Bar */
-        .progress-container { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 30px; overflow: hidden; }
-        .progress-bar { width: 0%; height: 100%; background: #ffc107; transition: linear; }
+        /* Search */
+        .search-404 {
+            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50px; padding: 4px 16px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .search-404 input {
+            background: transparent; border: none; color: white;
+            padding: 10px 4px; flex: 1; outline: none;
+            font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem;
+        }
+        .search-404 input::placeholder { color: #64748b; }
+
+        /* Suggestion chips */
+        .suggestion-chip {
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px; padding: 10px 12px;
+            text-decoration: none; display: flex; align-items: center;
+            margin-bottom: 10px; transition: 0.25s;
+        }
+        .suggestion-chip:hover { background: rgba(0,242,255,0.06); border-color: var(--neon-cyan); transform: translateX(4px); }
+        .suggestion-img { width: 42px; height: 42px; border-radius: 8px; object-fit: contain; background: #000; margin-right: 12px; flex-shrink: 0; padding: 4px; }
+
+        /* Progress bar */
+        .redirect-bar-wrap { width: 100%; height: 3px; background: rgba(255,255,255,0.07); border-radius: 10px; margin-top: 24px; overflow: hidden; }
+        .redirect-bar { width: 0%; height: 100%; background: var(--neon-cyan); transition: width 1s linear; box-shadow: 0 0 8px var(--neon-cyan); }
     </style>
 </head>
 <body>
-
-<div class="container">
+<div class="container py-5">
     <div class="error-card shadow-lg">
         <div class="radar-container">
             <div class="radar-circle"></div>
@@ -47,67 +80,67 @@
             <div class="radar-icon"><i class="fa-solid fa-satellite-dish"></i></div>
         </div>
 
-        <h1 class="fw-800 display-4 mb-2">404</h1>
-        <p class="text-secondary">Signal lost! This link has expired or never existed.</p>
+        <h1 class="display-4 mb-1" style="letter-spacing:-1px;">404</h1>
+        <p class="text-secondary mb-4" style="font-size:0.9rem;">Signal lost! This link has expired or never existed.</p>
 
-        <form action="/" method="GET" class="search-404 d-flex align-items-center mb-4">
+        <form action="/" method="GET" class="search-404 mb-4">
             <i class="fa-solid fa-magnifying-glass text-secondary"></i>
-            <input type="text" name="search" placeholder="Search for another deal...">
+            <input type="text" name="search" placeholder="Search for another deal…">
+            <button type="submit" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold">GO</button>
         </form>
 
-        <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-4">
-            <a href="/" class="btn btn-warning fw-bold px-4 py-2 rounded-pill shadow">
-                <i class="fa-solid fa-house me-2"></i>BACK TO DASHBOARD
+        <div class="d-flex gap-2 justify-content-center mb-4">
+            <a href="/" class="btn btn-warning fw-bold px-4 rounded-pill shadow">
+                <i class="fa-solid fa-house me-2"></i>Back to Deals
             </a>
+            <a href="/?category=Smartphones" class="btn btn-outline-secondary rounded-pill px-3">📱 Phones</a>
         </div>
 
         {% if suggestions %}
-        <div class="text-start mt-4">
-            <p class="small text-uppercase fw-bold text-warning mb-3">Live Deals You Missed:</p>
+        <div class="text-start mt-3">
+            <p class="x-small text-uppercase fw-bold text-warning mb-3" style="font-size:0.65rem;letter-spacing:1px;">
+                <i class="fa-solid fa-bolt me-1"></i>Live Deals You Can Grab Now:
+            </p>
             {% for deal in suggestions %}
             <a href="/go/{{ deal.id }}" class="suggestion-chip">
-                <img src="{{ deal.image_url }}" class="suggestion-img">
+                <img src="{{ deal.image_url }}" alt="{{ deal.product_name }}" class="suggestion-img"
+                     onerror="this.src='https://via.placeholder.com/42x42/000/fff?text=?'">
                 <div class="flex-grow-1 text-truncate">
                     <span class="text-white d-block small fw-bold">{{ deal.product_name }}</span>
-                    <span class="text-warning small">${{ deal.sale_price }}</span>
+                    <span class="text-warning small fw-bold">{{ deal.sale_price | currency }}</span>
                 </div>
-                <i class="fa-solid fa-chevron-right text-secondary small"></i>
+                <i class="fa-solid fa-chevron-right text-secondary small ms-2"></i>
             </a>
             {% endfor %}
         </div>
         {% endif %}
 
-        <div class="mt-4 p-2 rounded-3" style="background: rgba(0,0,0,0.2);">
-            <p class="small mb-0 text-secondary">
-                <i class="fa-solid fa-clock-rotate-left me-1"></i> 
-                Next Inventory Refresh in: <span class="text-white fw-bold">{{ sync_time }}</span>
+        <div class="mt-4 p-2 rounded-3" style="background:rgba(0,0,0,0.2);">
+            <p class="small mb-0 text-secondary" style="font-size:0.7rem;">
+                <i class="fa-solid fa-clock-rotate-left me-1"></i>
+                Next refresh in: <span class="text-white fw-bold font-monospace">{{ sync_time }}</span>
             </p>
         </div>
 
-        <div class="progress-container">
-            <div class="progress-bar" id="redirectBar"></div>
+        <div class="redirect-bar-wrap">
+            <div class="redirect-bar" id="redirectBar"></div>
         </div>
-        <p class="small text-muted mt-2">Auto-redirecting in <span id="timerText">10</span>s...</p>
+        <p class="small text-muted mt-2" style="font-size:0.68rem;">
+            Auto-redirecting in <span id="timerText" class="text-white fw-bold">10</span>s…
+        </p>
     </div>
 </div>
 
 <script>
-    // 6. Auto-Redirect Logic
-    let timeLeft = 10;
-    const bar = document.getElementById('redirectBar');
+    let t = 10;
+    const bar  = document.getElementById('redirectBar');
     const text = document.getElementById('timerText');
-
-    const countdown = setInterval(() => {
-        timeLeft--;
-        text.innerText = timeLeft;
-        bar.style.width = ((10 - timeLeft) * 10) + '%';
-        
-        if (timeLeft <= 0) {
-            clearInterval(countdown);
-            window.location.href = "/";
-        }
+    const tick = setInterval(() => {
+        t--;
+        text.textContent = t;
+        bar.style.width  = ((10 - t) * 10) + '%';
+        if (t <= 0) { clearInterval(tick); window.location.href = '/'; }
     }, 1000);
 </script>
-
 </body>
 </html>

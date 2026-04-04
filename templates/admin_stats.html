@@ -1,277 +1,302 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | FlashSale Pro</title>
+    <title>DropDeals Admin | Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_stats.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="admin-body">
-
-    <div class="container-fluid p-3 p-md-4 mb-md-0">
-        
-        <div class="header-section d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold m-0 text-white fs-3">🚀 <span class="text-warning">Center</span></h2>
-            
-            <button class="btn btn-outline-warning d-md-none border-0 fs-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminMenu">
-                <i class="fa-solid fa-bars-staggered"></i>
-            </button>
-
-            <div class="d-none d-md-flex gap-2">
-    <a href="{{ url_for('index') }}" class="btn btn-outline-info btn-sm rounded-pill px-3">View Site</a>
-    <a href="{{ url_for('admin_sync') }}" class="btn btn-outline-warning btn-sm rounded-pill px-3"><i class="fa-solid fa-sync me-1"></i>Sync</a>
-    
-    {% if session.get('last_sync_batch') %}
-    <a href="{{ url_for('undo_sync') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Undo Sync</a>
-    {% endif %}
-
-    <a href="/admin/add" class="btn btn-warning fw-bold btn-sm rounded-pill px-3">+ Add</a>
-    
-    <a href="javascript:void(0)" onclick="confirmAction('{{ url_for('force_cleanup') }}', 'Optimize Database?', 'info')" class="btn btn-outline-info btn-sm rounded-pill px-3">
-        <i class="fa-solid fa-wand-magic-sparkles me-1"></i>Optimize
-    </a>
-    <a href="javascript:void(0)" onclick="confirmAction('{{ url_for('clear_all_deals') }}', 'WIPE ALL DATA?', 'danger')" class="btn btn-outline-danger btn-sm rounded-pill px-3">
-        <i class="fa-solid fa-trash-can me-1"></i>Reset
-    </a>
-    
-    <a href="/logout" class="btn btn-outline-danger btn-sm rounded-pill px-2"><i class="fa-solid fa-power-off"></i></a>
-</div>
+<body class="drop-admin-body">
+<div class="container-fluid admin-shell py-4">
+    <header class="admin-topbar mb-4">
+        <div>
+            <p class="admin-kicker mb-2">DropDeals Control Room</p>
+            <h1>Automation Dashboard</h1>
+            <p class="admin-subtitle mb-0">Manage live inventory, run syncs, fall back to offline cache, and keep the storefront in shape.</p>
         </div>
-
-        <div class="offcanvas offcanvas-end glass-offcanvas" tabindex="-1" id="adminMenu">
-            <div class="offcanvas-header border-bottom border-secondary">
-                <h5 class="offcanvas-title text-warning fw-bold">Admin Panel</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-            </div>
-            <div class="offcanvas-body d-flex flex-column gap-2">
-    <a href="/" class="nav-link-mobile"><i class="fa-solid fa-eye me-2"></i>View Site</a>
-    <a href="{{ url_for('admin_sync') }}" class="nav-link-mobile"><i class="fa-solid fa-sync me-2"></i>Sync Deals</a>
-    {% if session.get('last_sync_batch') %}<a href="{{ url_for('undo_sync') }}" class="nav-link-mobile"><i class="fa-solid fa-rotate-left me-2"></i>Undo Sync</a>{% endif %}
-    <a href="/admin/add" class="nav-link-mobile text-success"><i class="fa-solid fa-circle-plus me-2"></i>Add New Deal</a>
-    
-    <hr class="text-secondary opacity-25 my-2">
-    
-    <a href="javascript:void(0)" onclick="confirmAction('{{ url_for('force_cleanup') }}', 'Optimize Database?', 'info')" class="nav-link-mobile text-info">
-        <i class="fa-solid fa-wand-magic-sparkles me-2"></i>Optimize Data
-    </a>
-    <a href="javascript:void(0)" onclick="confirmAction('{{ url_for('clear_all_deals') }}', 'WIPE ALL DATA?', 'danger')" class="nav-link-mobile text-danger">
-        <i class="fa-solid fa-dumpster-fire me-2"></i>Full System Reset
-    </a>
-    
-    <hr class="text-secondary opacity-25 my-3">
-    <a href="/logout" class="nav-link-mobile text-white-50"><i class="fa-solid fa-power-off me-2"></i>Logout</a>
-</div>
+        <div class="admin-topbar-actions">
+            <span class="admin-date">{{ now.strftime('%A, %d %B %Y %H:%M') if now else '' }}</span>
+            <a href="{{ url_for('index') }}" class="btn btn-outline-light rounded-pill px-3">View site</a>
+            <a href="{{ url_for('add_deal') }}" class="btn btn-warning rounded-pill px-3 fw-semibold">Add deal</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger rounded-pill px-3">Logout</a>
         </div>
+    </header>
 
-        <div class="row g-2 mb-4">
-            <div class="col-6 col-md-3">
-                <div class="stat-card border-success-subtle">
-                    <div class="stat-label">Revenue (5%)</div>
-                    <div class="stat-value text-success">${{ (kpis.total_revenue or 0) | currency }}</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-card border-warning-subtle">
-                    <div class="stat-label">Live Inventory</div>
-                    <div class="stat-value text-warning">{{ inventory.live or 0 }}</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-card border-info-subtle">
-                    <div class="stat-label">Total Clicks</div>
-                    <div class="stat-value text-info">{{ kpis.total_clicks or 0 }}</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-card border-primary-subtle">
-                    <div class="stat-label">Active Alerts</div>
-                    <div class="stat-value text-primary">
-                        {% set total_subs = stats|sum(attribute='alert_count') if stats else 0 %}
-                        {{ total_subs }}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} border-0 admin-alert" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <section class="quick-actions mb-4">
+        <a href="{{ url_for('admin_sync') }}" class="quick-action-card warning" onclick="this.innerHTML='Running live sync...';">
+            <i class="fa-solid fa-rotate"></i>
+            <span>Fetch live sources</span>
+        </a>
+        <a href="{{ url_for('run_offline_agent') }}" class="quick-action-card info">
+            <i class="fa-solid fa-hard-drive"></i>
+            <span>Run offline cache sync</span>
+        </a>
+        <a href="{{ url_for('cleanup_expired') }}" class="quick-action-card neutral">
+            <i class="fa-solid fa-broom"></i>
+            <span>Remove expired deals</span>
+        </a>
+        <a href="{{ url_for('run_agent') }}" class="quick-action-card neutral">
+            <i class="fa-solid fa-bolt"></i>
+            <span>Run full automation cycle</span>
+        </a>
+        <a href="javascript:void(0)" onclick="confirmAction('{{ url_for('clear_all_deals') }}', 'Reset all inventory?', 'warning')" class="quick-action-card danger">
+            <i class="fa-solid fa-trash-can"></i>
+            <span>Reset inventory</span>
+        </a>
+    </section>
+
+    <section class="metrics-grid mb-4">
+        <article class="metric-card">
+            <span class="metric-label">Estimated Revenue</span>
+            <strong class="metric-value">{{ kpis['total_revenue'] | currency }}</strong>
+            <small>Estimated from tracked click activity</small>
+        </article>
+        <article class="metric-card">
+            <span class="metric-label">Live Deals</span>
+            <strong class="metric-value">{{ inventory['live'] or 0 }}</strong>
+            <small>{{ inventory['total'] or 0 }} total items in inventory</small>
+        </article>
+        <article class="metric-card">
+            <span class="metric-label">Total Clicks</span>
+            <strong class="metric-value">{{ kpis['total_clicks'] or 0 }}</strong>
+            <small>Outbound openings captured so far</small>
+        </article>
+        <article class="metric-card">
+            <span class="metric-label">Alert Subscribers</span>
+            <strong class="metric-value">{{ stats|sum(attribute='alert_count') if stats else 0 }}</strong>
+            <small>{% if smtp_ready %}Email alerting is configured{% else %}Set SMTP to enable alert delivery{% endif %}</small>
+        </article>
+    </section>
+
+    <section class="dashboard-grid">
+        <div class="dashboard-main">
+            <div class="admin-panel mb-4">
+                <div class="panel-head">
+                    <div>
+                        <p class="panel-kicker mb-1">Performance</p>
+                        <h2>Weekly Click Activity</h2>
                     </div>
                 </div>
+                <div class="chart-wrap"><canvas id="clicksChart"></canvas></div>
             </div>
-        </div>
 
-        <div class="row g-3">
-            <div class="col-lg-8">
-                <div class="glass-card p-3 mb-3">
-                    <h6 class="section-header"><i class="fa-solid fa-chart-line me-2"></i>WEEKLY PERFORMANCE</h6>
-                    <div style="height:200px;"><canvas id="clicksChart"></canvas></div>
+            <div class="admin-panel mb-4">
+                <div class="panel-head inventory-head">
+                    <div>
+                        <p class="panel-kicker mb-1">Inventory</p>
+                        <h2>Deal Manager</h2>
+                    </div>
+                    <div class="inventory-tools">
+                        <input type="text" id="inventorySearch" class="form-control form-control-sm search-admin" placeholder="Search deals">
+                        <a href="{{ url_for('add_deal') }}" class="btn btn-warning rounded-pill btn-sm px-3">New deal</a>
+                    </div>
                 </div>
+                <div class="table-responsive">
+                    <table class="table inventory-table align-middle mb-0" id="inventoryTable">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Clicks</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in stats %}
+                            <tr class="inventory-row">
+                                <td>
+                                    <div class="item-title">{{ item['product_name'] }}</div>
+                                    <div class="item-sub">{{ item['store_name'] or item['merchant_name'] or item['source_name'] }}</div>
+                                </td>
+                                <td>{{ item['category'] }}</td>
+                                <td>
+                                    <div class="price-now">{{ item['sale_price'] | currency }}</div>
+                                    <div class="price-old">{{ item['original_price'] | currency }}</div>
+                                </td>
+                                <td>{{ item['click_count'] or 0 }}</td>
+                                <td>
+                                    <span class="status-pill {{ 'live' if item['expiry_time'] > now else 'expired' }}">
+                                        {{ 'Live' if item['expiry_time'] > now else 'Expired' }}
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="row-actions">
+                                        <a href="{{ url_for('edit_deal', deal_id=item['id']) }}" class="action-link"><i class="fa-solid fa-pen"></i></a>
+                                        <a href="/go/{{ item['id'] }}" target="_blank" class="action-link"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                                        <a href="javascript:void(0)" onclick='confirmDelete("{{ url_for("delete_deal", deal_id=item["id"]) }}", {{ item["product_name"]|tojson }})' class="action-link danger"><i class="fa-solid fa-trash-can"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-                <div class="glass-card overflow-hidden">
-                    <div class="p-3 border-bottom border-secondary d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="admin-panel">
+                <div class="panel-head">
+                    <div>
+                        <p class="panel-kicker mb-1">Automation history</p>
+                        <h2>Recent Runs</h2>
+                    </div>
+                </div>
+                <div class="run-list">
+                    {% for run in automation_runs %}
+                    <div class="run-card">
                         <div>
-                            <h6 class="section-header m-0">INVENTORY MANAGER</h6>
-                            <div class="mt-2 d-flex gap-2 flex-wrap">
-                                <span class="badge rounded-pill bg-dark border border-secondary x-small">
-                                    Total: {{ inventory.total or 0 }}
-                                </span>
-                                <span class="badge rounded-pill bg-success-subtle text-success border border-success x-small">
-                                    Live: {{ inventory.live or 0 }}
-                                </span>
-                            </div>
+                            <strong>{{ run['run_type'] }}</strong>
+                            <span>{{ run['summary'] }}</span>
                         </div>
-
-                        <div class="flex-grow-1 mx-md-3 my-2 my-md-0" style="max-width: 300px;">
-                            <div class="input-group input-group-sm custom-search-group">
-                                <span class="input-group-text bg-transparent border-secondary text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
-                                <input type="text" id="inventorySearch" class="form-control bg-transparent border-secondary text-white" placeholder="Search deals...">
-                            </div>
-                        </div>
+                        <span class="status-pill {{ 'live' if run['status'] == 'success' else 'expired' }}">{{ run['status'] }}</span>
                     </div>
-                    
-                    <div class="table-responsive">
-                        <table class="table table-dark-custom align-middle m-0" id="inventoryTable">
-                            <thead><tr><th>Product</th><th>Price</th><th class="text-end px-3">Action</th></tr></thead>
-                            <tbody>
-                                {% for item in stats %}
-                                <tr class="inventory-row">
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span class="status-dot {{ 'status-dot-live' if item.expiry_time > now else 'status-dot-expired' }} me-2"></span>
-                                            <div class="text-truncate" style="max-width: 250px;">
-                                                <div class="fw-bold text-white small product-title">
-                                                    {{ item.product_name }}
-                                                </div>
-                                                <div class="text-muted x-small product-meta">
-                                                    <span class="text-info fw-bold">{{ item.category }}</span> 
-                                                    • {{ item.click_count or 0 }} clicks 
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="text-success fw-bold">${{ item.sale_price | currency }}</div>
-                                        <div class="text-muted text-decoration-line-through x-small">${{ item.original_price | currency }}</div>
-                                    </td>
-                                    <td class="text-end px-3">
-                                        <div class="d-flex justify-content-end gap-3">
-                                            <a href="/go/{{ item.id }}" target="_blank" class="text-info opacity-75 small"><i class="fa-solid fa-external-link"></i></a>
-                                            
-                                            <a href="javascript:void(0)" 
-                                               onclick="confirmDelete('{{ url_for('delete_deal', deal_id=item.id) }}', '{{ item.product_name | replace("'", "\\'") }}')" 
-                                               class="text-danger opacity-75">
-                                                <i class="fa-solid fa-trash-can"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <div class="glass-card p-3 mb-3">
-                    <h6 class="section-header text-info"><i class="fa-solid fa-envelope-open-text me-2"></i>ALERTS</h6>
-                    <div class="subscription-container" style="max-height: 250px; overflow-y: auto;">
-                        {% for item in stats if item.alert_count > 0 %}
-                            <div class="pulse-item-compact border-info border-start border-3 mb-2 ps-2">
-                                <div class="text-white x-small fw-bold text-truncate">{{ item.product_name }}</div>
-                                <div class="text-info" style="font-size: 0.7rem;">
-                                    <i class="fa-solid fa-users me-1"></i> {{ item.alert_count }} Users waiting
-                                </div>
-                            </div>
-                        {% else %}
-                            <div class="text-muted x-small py-3 text-center">No active alerts</div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <div class="glass-card p-3 h-auto">
-                    <h6 class="section-header text-warning"><i class="fa-solid fa-bolt me-2"></i>LIVE PULSE</h6>
-                    <div class="pulse-container" style="max-height: 300px; overflow-y: auto;">
-                        {% for log in recent_activity %}
-                        <div class="pulse-item-compact">
-                            <div class="text-white fw-bold small">{{ log.product_name }}</div>
-                            <div class="pulse-time">{{ log.clicked_at.strftime('%H:%M:%S') if log.clicked_at else 'Just now' }}</div>
-                        </div>
-                        {% else %}
-                        <div class="text-muted x-small py-4 text-center">No recent activity</div>
-                        {% endfor %}
-                    </div>
+                    {% else %}
+                    <div class="empty-mini">No automation runs recorded yet.</div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Live Search Logic
-        document.getElementById('inventorySearch').addEventListener('keyup', function() {
-            const filter = this.value.toLowerCase();
-            const rows = document.querySelectorAll('.inventory-row');
-            rows.forEach(row => {
-                const text = row.innerText.toLowerCase();
-                row.style.display = text.includes(filter) ? "" : "none";
-            });
+        <aside class="dashboard-side">
+            <div class="admin-panel mb-4">
+                <div class="panel-head">
+                    <div>
+                        <p class="panel-kicker mb-1">Offline support</p>
+                        <h2>Cache Status</h2>
+                    </div>
+                </div>
+                <div class="stack-list">
+                    <div class="stack-card info">
+                        <strong>Cached snapshot</strong>
+                        <span>{{ offline_cache.get('saved_at', 'No cache saved yet') }}</span>
+                    </div>
+                    <div class="stack-card">
+                        <strong>Cached deals</strong>
+                        <span>{{ offline_cache.get('deals', [])|length }} available for offline mode</span>
+                    </div>
+                    <div class="stack-card">
+                        <strong>Mailer</strong>
+                        <span>{% if smtp_ready %}Configured{% else %}SMTP not configured{% endif %}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-panel mb-4">
+                <div class="panel-head">
+                    <div>
+                        <p class="panel-kicker mb-1">Suggestions</p>
+                        <h2>What to do next</h2>
+                    </div>
+                </div>
+                <div class="stack-list">
+                    {% for suggestion in suggestion_cards %}
+                    <div class="stack-card info">
+                        <strong>{{ suggestion.title }}</strong>
+                        <span>{{ suggestion.detail }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="admin-panel">
+                <div class="panel-head">
+                    <div>
+                        <p class="panel-kicker mb-1">Recent activity</p>
+                        <h2>Latest Clicks</h2>
+                    </div>
+                </div>
+                <div class="stack-list">
+                    {% for log in recent_activity %}
+                    <div class="stack-card">
+                        <strong>{{ log['product_name'] }}</strong>
+                        <span>{{ log['clicked_at'].strftime('%d %b, %H:%M') if log['clicked_at'] else 'Just now' }}</span>
+                    </div>
+                    {% else %}
+                    <div class="empty-mini">No recent click activity.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </aside>
+    </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('inventorySearch').addEventListener('keyup', function () {
+        const f = this.value.toLowerCase();
+        document.querySelectorAll('.inventory-row').forEach(row => {
+            row.style.display = row.innerText.toLowerCase().includes(f) ? '' : 'none';
         });
+    });
 
-        // SweetAlert Theme
-        const swalConfig = {
-            background: '#1e293b', color: '#f1f5f9',
-            confirmButtonColor: '#f9ba00', cancelButtonColor: 'rgba(255,255,255,0.1)'
-        };
+    const swalConfig = {
+        background: '#102033', color: '#f7fafc',
+        confirmButtonColor: '#ffb703', cancelButtonColor: '#334155'
+    };
 
-        function confirmDelete(url, name) {
-            Swal.fire({
-                ...swalConfig, 
-                title: 'Delete Deal?', 
-                text: `Are you sure you want to remove "${name}"?`, 
-                icon: 'warning', 
-                showCancelButton: true,
-                confirmButtonText: 'Yes, Delete'
-            }).then((res) => { 
-                if(res.isConfirmed) window.location.href = url; 
-            });
-        }
-        function confirmAction(url, title, type = 'info') {
-    Swal.fire({
-        ...swalConfig,
-        title: title,
-        text: "This action cannot be undone.",
-        icon: type === 'danger' ? 'warning' : 'question',
-        showCancelButton: true,
-        confirmButtonText: type === 'danger' ? 'Yes, WIPE EVERYTHING' : 'Yes, Optimize',
-        confirmButtonColor: type === 'danger' ? '#dc3545' : '#0dcaf0',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = url;
+    function confirmDelete(url, name) {
+        Swal.fire({
+            ...swalConfig,
+            title: 'Delete this deal?',
+            html: `<strong>${name}</strong><br><small>This action cannot be undone.</small>`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Delete'
+        }).then((result) => { if (result.isConfirmed) window.location.href = url; });
+    }
+
+    function confirmAction(url, title, icon) {
+        Swal.fire({
+            ...swalConfig,
+            title,
+            icon,
+            showCancelButton: true,
+            confirmButtonText: 'Continue'
+        }).then((result) => { if (result.isConfirmed) window.location.href = url; });
+    }
+
+    const chartData = {{ chart_data|tojson }};
+    const labels = chartData.map(item => item.date);
+    const values = chartData.map(item => item.count);
+
+    new Chart(document.getElementById('clicksChart'), {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Clicks',
+                data: values,
+                borderColor: '#ff7f50',
+                backgroundColor: 'rgba(255,127,80,0.14)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.35,
+                pointBackgroundColor: '#ffd166'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { ticks: { color: '#9fb0c8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                y: { ticks: { color: '#9fb0c8' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+            }
         }
     });
-}
-
-        // Chart Configuration
-        const ctx = document.getElementById('clicksChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [{% for day in chart_data %}'{{ day.date.strftime("%d %b") }}',{% endfor %}],
-                datasets: [{ 
-                    label: 'Clicks',
-                    data: [{% for day in chart_data %}{{ day.count }},{% endfor %}], 
-                    borderColor: '#0dcaf0', fill: true, tension: 0.4, backgroundColor: 'rgba(13, 202, 240, 0.1)',
-                    borderWidth: 3, pointRadius: 4
-                }]
-            },
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
-                    x: { grid: { display: false } }
-                }
-            }
-        });
-    </script>
+</script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 # Local environment variables (KEEP THIS PRIVATE!)
 .env
+.env.example
 
 # Python virtual environment
 venv/
